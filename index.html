@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!--
+  ╔══════════════════════════════════════════════════════╗
+  ║         YOUR NAME — PHOTOGRAPHY PORTFOLIO           ║
+  ║                                                      ║
+  ║  HOW TO CUSTOMIZE:                                   ║
+  ║  1. Search for "YOUR NAME" and replace everywhere    ║
+  ║  2. Search for "YOUR CITY" and replace               ║
+  ║  3. Search for "your-email@example.com" and replace  ║
+  ║  4. Search for "@yourhandle" and replace             ║
+  ║  5. Edit the SERIES DATA section below (~line 280)   ║
+  ║  6. Replace placeholder <div class="ph"> with        ║
+  ║     real <img src="images/yourphoto.jpg"> tags       ║
+  ╚══════════════════════════════════════════════════════╝
+
+  FOLDER STRUCTURE FOR YOUR IMAGES:
+  Put all your photos inside a folder called "images/"
+  next to this index.html file, like this:
+
+  my-website/
+  ├── index.html         ← this file
+  └── images/
+      ├── home-01.jpg
+      ├── home-02.jpg
+      ├── series1-01.jpg
+      ├── series1-02.jpg
+      └── ...
+
+  TO ADD A REAL IMAGE, replace:
+    <div class="ph">some label</div>
+  with:
+    <img src="images/your-photo.jpg" alt="description" style="width:100%;height:100%;object-fit:cover;">
+-->
+
+<title>YOUR NAME — Photography</title>
+<meta name="description" content="YOUR NAME — photographer based in YOUR CITY">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap');
+
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── VARIABLES — change these to restyle the whole site ── */
+:root {
+  --bg: #ffffff;
+  --ink: #111111;
+  --muted: #888888;
+  --border: #e8e8e8;
+  --hover-bg: #fafafa;
+  --font: 'Courier Prime', Courier, monospace;
+}
+
+/* ── BASE ── */
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+a { color: var(--ink); text-decoration: none; }
+a:hover { text-decoration: underline; cursor: pointer; }
+
+/* ── PAGE SWITCHING ── */
+.page { display: none; }
+.page.active { display: block; }
+.fade { animation: fadeIn 0.3s ease both; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ════════════════════════════════
+   NAV
+════════════════════════════════ */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(4px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-name {
+  font-size: 13px;
+  font-style: italic;
+  cursor: pointer;
+}
+
+.nav-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.nav-links a.active,
+.nav-links a:hover { color: var(--ink); }
+
+/* ════════════════════════════════
+   HOME PAGE
+════════════════════════════════ */
+#home { padding-top: 80px; min-height: 100vh; }
+
+/* scattered image area */
+.home-images {
+  position: relative;
+  width: 100%;
+  height: 520px;
+  overflow: hidden;
+}
+
+/* default background images (always visible, fade out on hover) */
+.floating-img {
+  position: absolute;
+  overflow: hidden;
+  transition: opacity 0.25s;
+}
+
+/* adjust these positions/sizes to rearrange the homepage layout */
+.img-1 { width: 280px; height: 340px; top: 20px;  left: 40px;  background: #e4e4e4; }
+.img-2 { width: 200px; height: 260px; top: 60px;  left: 340px; background: #e0e0e0; }
+.img-3 { width: 240px; height: 180px; top: 10px;  left: 560px; background: #dcdcdc; }
+.img-4 { width: 160px; height: 210px; top: 220px; left: 580px; background: #e2e2e2; }
+.img-5 { width: 180px; height: 240px; top: 260px; left: 200px; background: #dedede; }
+
+/* placeholder text inside image blocks */
+.ph {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: #bbb;
+  letter-spacing: 0.05em; font-style: italic;
+}
+
+/* series hover image sets */
+.series-imgs {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.series-imgs.visible { opacity: 1; }
+.si { position: absolute; overflow: hidden; }
+.si .ph { width: 100%; height: 100%; }
+
+/* ── Series 1 image positions (hover: "how light leaves a room") ── */
+.s1 .si-a { width: 300px; height: 380px; top: 10px;  left: 30px;  background: #ddd; }
+.s1 .si-b { width: 220px; height: 180px; top: 30px;  left: 350px; background: #d4d4d4; }
+.s1 .si-c { width: 190px; height: 260px; top: 230px; left: 370px; background: #e0e0e0; }
+.s1 .si-d { width: 150px; height: 200px; top: 60px;  left: 590px; background: #d8d8d8; }
+
+/* ── Series 2 image positions (hover: "the city at rest") ── */
+.s2 .si-a { width: 260px; height: 200px; top: 40px;  left: 20px;  background: #e2e2e2; }
+.s2 .si-b { width: 180px; height: 300px; top: 180px; left: 20px;  background: #d6d6d6; }
+.s2 .si-c { width: 320px; height: 360px; top: 30px;  left: 230px; background: #dcdcdc; }
+.s2 .si-d { width: 160px; height: 180px; top: 290px; left: 570px; background: #e0e0e0; }
+
+/* ── Series 3 image positions (hover: "domestic quiet") ── */
+.s3 .si-a { width: 200px; height: 260px; top: 50px;  left: 60px;  background: #e4e4e4; }
+.s3 .si-b { width: 280px; height: 190px; top: 60px;  left: 290px; background: #d8d8d8; }
+.s3 .si-c { width: 210px; height: 280px; top: 270px; left: 200px; background: #ddd; }
+.s3 .si-d { width: 170px; height: 220px; top: 40px;  left: 590px; background: #e2e2e2; }
+
+/* ── Series 4 image positions (hover: "portraits, unposed") ── */
+.s4 .si-a { width: 180px; height: 240px; top: 30px;  left: 50px;  background: #d8d8d8; }
+.s4 .si-b { width: 260px; height: 340px; top: 60px;  left: 260px; background: #e0e0e0; }
+.s4 .si-c { width: 200px; height: 160px; top: 320px; left: 50px;  background: #dcdcdc; }
+.s4 .si-d { width: 190px; height: 250px; top: 20px;  left: 550px; background: #e4e4e4; }
+
+/* bottom section: series list + terminal */
+.home-bottom {
+  padding: 32px 20px 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid var(--border);
+}
+
+.project-links { padding-right: 40px; }
+.project-links p { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+.project-links ul { list-style: none; }
+.project-links ul li { padding: 3px 0; }
+.project-links ul li a {
+  font-size: 13px; font-style: italic; cursor: pointer;
+  display: inline-block; transition: transform 0.15s;
+}
+.project-links ul li a:hover { transform: translateX(4px); }
+
+.home-info {
+  border-left: 1px solid var(--border);
+  padding-left: 40px;
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+
+/* blinking terminal cursor */
+.terminal-line { font-size: 12px; color: var(--muted); }
+.cursor {
+  display: inline-block; width: 7px; height: 13px;
+  background: var(--ink); vertical-align: middle; margin-left: 1px;
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+.status-line { font-size: 11px; color: #bbb; margin-top: 24px; line-height: 2; }
+
+/* ════════════════════════════════
+   SERIES LIST PAGE
+════════════════════════════════ */
+#projects { padding-top: 80px; }
+
+.series-header {
+  padding: 32px 20px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: baseline;
+}
+.series-header h1 { font-size: 13px; font-weight: 400; font-style: italic; }
+.series-header span { font-size: 11px; color: var(--muted); }
+
+.series-row {
+  display: grid;
+  grid-template-columns: 60px 1fr 80px 70px;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s;
+  gap: 20px;
+}
+.series-row:hover { background: var(--hover-bg); }
+.series-row:hover .series-name { text-decoration: underline; }
+
+.series-num   { font-size: 11px; color: var(--muted); }
+.series-name  { font-size: 13px; font-style: italic; }
+.series-year  { font-size: 11px; color: var(--muted); text-align: right; }
+.series-count { font-size: 11px; color: var(--muted); text-align: right; }
+
+/* ════════════════════════════════
+   SERIES DETAIL PAGE
+════════════════════════════════ */
+#series-detail { padding-top: 80px; }
+
+.detail-header {
+  padding: 24px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: baseline; gap: 24px;
+}
+.detail-back {
+  font-size: 11px; color: var(--muted); cursor: pointer;
+  flex-shrink: 0;
+}
+.detail-back:hover { color: var(--ink); }
+.detail-title { font-size: 13px; font-style: italic; font-weight: 400; }
+.detail-meta  { font-size: 11px; color: var(--muted); margin-left: auto; }
+
+.detail-desc {
+  padding: 20px 20px 24px;
+  border-bottom: 1px solid var(--border);
+  font-size: 11px; color: var(--muted);
+  max-width: 60ch; line-height: 1.8;
+}
+
+.detail-images { padding: 32px 20px 60px; }
+
+/* image rows */
+.img-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.img-block {
+  background: #e4e4e4;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: #bbb; font-style: italic; letter-spacing: 0.04em;
+  position: relative;
+}
+
+/* caption shown on hover */
+.img-block-caption {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 6px 8px;
+  font-size: 10px; color: #777;
+  opacity: 0; transition: opacity 0.2s;
+  background: rgba(255, 255, 255, 0.88);
+}
+.img-block:hover .img-block-caption { opacity: 1; }
+
+/* ════════════════════════════════
+   ABOUT PAGE
+════════════════════════════════ */
+#about { padding-top: 80px; }
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: calc(100vh - 80px);
+}
+
+.about-left {
+  border-right: 1px solid var(--border);
+  padding: 32px 20px;
+  display: flex; flex-direction: column; gap: 40px;
+}
+
+.about-portrait {
+  width: 100%; aspect-ratio: 3/4;
+  background: #e8e8e8;
+  display: flex; align-items: center; justify-content: center;
+  font-style: italic; color: #bbb; font-size: 11px;
+  overflow: hidden;
+}
+
+/* TO ADD YOUR PORTRAIT: replace the <div class="ph"> inside .about-portrait with:
+   <img src="images/portrait.jpg" alt="your name" style="width:100%;height:100%;object-fit:cover;"> */
+
+.about-social { font-size: 11px; color: var(--muted); line-height: 2.2; }
+.about-social a { color: var(--muted); }
+.about-social a:hover { color: var(--ink); }
+
+.about-right { padding: 32px 20px; }
+.about-right h2 {
+  font-size: 13px; font-weight: 400; font-style: italic;
+  margin-bottom: 24px; line-height: 1.8;
+}
+.about-right p {
+  font-size: 12px; color: #555;
+  margin-bottom: 16px; line-height: 1.8; max-width: 42ch;
+}
+
+.about-table { margin-top: 40px; width: 100%; border-collapse: collapse; }
+.about-table tr { border-top: 1px solid var(--border); }
+.about-table td { padding: 8px 0; font-size: 11px; vertical-align: top; }
+.about-table td:first-child { color: var(--muted); width: 120px; }
+
+/* ════════════════════════════════
+   CONTACT INFO (inside about page)
+════════════════════════════════ */
+.contact-block small { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+.contact-block a,
+.contact-block span { font-size: 13px; font-style: italic; color: var(--ink); }
+.contact-block a:hover { text-decoration: underline; }
+
+.contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 8px;
+}
+
+.error-block { margin-top: 40px; font-size: 11px; color: #bbb; line-height: 2; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════
+     NAVIGATION
+     Change "your name." to your name
+══════════════════════════════════ -->
+<nav>
+  <div class="nav-name" onclick="showPage('home')">your name.</div>
+  <ul class="nav-links">
+    <li><a onclick="showPage('home')"  id="nav-home"  class="active">work</a></li>
+    <li><a onclick="showPage('about')" id="nav-about">about</a></li>
+  </ul>
+</nav>
+
+
+<!-- ══════════════════════════════════
+     HOME PAGE
+══════════════════════════════════ -->
+<div id="home" class="page active fade">
+
+  <!-- scattered images area -->
+  <div class="home-images">
+
+    <!-- DEFAULT images (always visible, fade out on series hover) -->
+    <!-- Replace <div class="ph">label</div> with <img src="images/xxx.jpg" ...> -->
+    <div class="floating-img img-1"><div class="ph">2024 / milan</div></div>
+    <div class="floating-img img-2"><div class="ph">2023</div></div>
+    <div class="floating-img img-3"><div class="ph">untitled</div></div>
+    <div class="floating-img img-4"><div class="ph">portrait</div></div>
+    <div class="floating-img img-5"><div class="ph">light study</div></div>
+
+    <!-- SERIES 1 hover images (appear when hovering "how light leaves a room") -->
+    <div class="series-imgs s1" id="si-0">
+      <div class="si si-a"><div class="ph">how light leaves — 01</div></div>
+      <div class="si si-b"><div class="ph">— 02</div></div>
+      <div class="si si-c"><div class="ph">— 03</div></div>
+      <div class="si si-d"><div class="ph">— 04</div></div>
+    </div>
+
+    <!-- SERIES 2 hover images (appear when hovering "the city at rest") -->
+    <div class="series-imgs s2" id="si-1">
+      <div class="si si-a"><div class="ph">city at rest — 01</div></div>
+      <div class="si si-b"><div class="ph">— 02</div></div>
+      <div class="si si-c"><div class="ph">— 03</div></div>
+      <div class="si si-d"><div class="ph">— 04</div></div>
+    </div>
+
+    <!-- SERIES 3 hover images (appear when hovering "domestic quiet") -->
+    <div class="series-imgs s3" id="si-2">
+      <div class="si si-a"><div class="ph">domestic quiet — 01</div></div>
+      <div class="si si-b"><div class="ph">— 02</div></div>
+      <div class="si si-c"><div class="ph">— 03</div></div>
+      <div class="si si-d"><div class="ph">— 04</div></div>
+    </div>
+
+    <!-- SERIES 4 hover images (appear when hovering "portraits, unposed") -->
+    <div class="series-imgs s4" id="si-3">
+      <div class="si si-a"><div class="ph">portraits — 01</div></div>
+      <div class="si si-b"><div class="ph">— 02</div></div>
+      <div class="si si-c"><div class="ph">— 03</div></div>
+      <div class="si si-d"><div class="ph">— 04</div></div>
+    </div>
+
+  </div><!-- /home-images -->
+
+  <!-- series list + terminal -->
+  <div class="home-bottom">
+    <div class="project-links">
+      <p>— series</p>
+      <ul id="homeSeriesList"></ul>
+      <!-- built by JS from SERIES DATA below -->
+    </div>
+    <div class="home-info">
+      <div class="terminal-line">visitor@yourname.com:~$ <span class="cursor"></span></div>
+      <div class="status-line">
+        photographer — YOUR CITY<br>
+        © 2025 — all rights reserved<br>
+        <span style="color:#ddd;">————————————————</span><br>
+        open for commissions
+      </div>
+    </div>
+  </div>
+
+</div><!-- /home -->
+
+
+<!-- ══════════════════════════════════
+     SERIES DETAIL PAGE
+     (filled dynamically when clicking a series)
+══════════════════════════════════ -->
+<div id="series-detail" class="page">
+  <div class="detail-header">
+    <span class="detail-back" onclick="showPage('home')">← work</span>
+    <span class="detail-title" id="detail-title"></span>
+    <span class="detail-meta"  id="detail-meta"></span>
+  </div>
+  <div class="detail-desc" id="detail-desc"></div>
+  <div class="detail-images" id="detail-images"></div>
+</div>
+
+
+<!-- ══════════════════════════════════
+     ABOUT PAGE (includes contact info)
+     Edit the text, table, and links here
+══════════════════════════════════ -->
+<div id="about" class="page">
+  <div class="about-grid">
+
+    <div class="about-left">
+      <!-- YOUR PORTRAIT — replace the div.ph with an <img> tag -->
+      <div class="about-portrait">
+        <div class="ph">portrait</div>
+        <!-- <img src="images/portrait.jpg" alt="your name" style="width:100%;height:100%;object-fit:cover;"> -->
+      </div>
+
+      <!-- EDIT YOUR CONTACT LINKS HERE -->
+      <div class="contact-list">
+        <div class="contact-block">
+          <small>email</small>
+          <a href="mailto:your-email@example.com">your-email@example.com</a>
+        </div>
+        <div class="contact-block">
+          <small>instagram</small>
+          <a href="https://instagram.com/yourhandle" target="_blank">@yourhandle</a>
+        </div>
+        <div class="contact-block">
+          <small>are.na</small>
+          <a href="https://are.na/yourhandle" target="_blank">are.na/yourhandle</a>
+        </div>
+        <div class="contact-block">
+          <small>vsco</small>
+          <a href="https://vsco.co/yourhandle" target="_blank">vsco/yourhandle</a>
+        </div>
+      </div>
+
+      <div class="error-block">
+        —<br>
+        open for commissions.<br>
+        visitor@yourname.com:~$ <span class="cursor"></span>
+      </div>
+    </div>
+
+    <div class="about-right">
+      <!-- EDIT YOUR BIO HERE -->
+      <h2>
+        i photograph the spaces<br>
+        between things —<br>
+        light, silence, grain.
+      </h2>
+      <p>
+        based in YOUR CITY. working with natural light and analogue
+        processes since 2014. my practice spans portraiture, urban
+        landscape, and long-form series.
+      </p>
+      <p>
+        i have collaborated with independent publishers, galleries,
+        and editorial clients across europe. prints available on request.
+      </p>
+
+      <!-- EDIT YOUR INFO TABLE HERE -->
+      <table class="about-table">
+        <tr><td>based</td>    <td>YOUR CITY, Italy</td></tr>
+        <tr><td>camera</td>   <td>leica m6 / contax t2</td></tr>
+        <tr><td>film</td>     <td>kodak tri-x 400, ilford hp5</td></tr>
+        <tr><td>darkroom</td> <td>wet print, analogue</td></tr>
+        <tr><td>available</td><td>commissions, editorial, prints</td></tr>
+      </table>
+    </div>
+
+  </div>
+</div><!-- /about -->
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     SERIES DATA — EDIT THIS SECTION TO ADD YOUR SERIES & IMAGES
+     
+     Each series object has:
+       num:    display number (e.g. "001")
+       name:   series title (lowercase, italic style)
+       year:   year or range (e.g. "2024" or "2023–24")
+       count:  shown in the list (e.g. "12 images")
+       desc:   one-line description shown on detail page
+       images: array of image objects, each with:
+                 w:     display width in pixels (layout hint)
+                 h:     display height in pixels (layout hint)
+                 src:   path to your image file (e.g. "images/s1-01.jpg")
+                        leave empty "" to show a placeholder
+                 label: caption shown on hover
+══════════════════════════════════════════════════════════════ -->
+<script>
+const series = [
+  {
+    num: '001',
+    name: 'how light leaves a room',
+    year: '2024',
+    count: '34 images',
+    desc: 'a study of interiors at dusk — the moment before darkness takes over a room. shot over two winters in milan.',
+    images: [
+      { w: 420, h: 560, src: '', label: 'milan, nov 2024' },
+      { w: 280, h: 380, src: '', label: 'untitled #02' },
+      { w: 360, h: 240, src: '', label: 'via tortona' },
+      { w: 200, h: 300, src: '', label: 'untitled #04' },
+      { w: 500, h: 340, src: '', label: 'stanza, morning' },
+      { w: 240, h: 360, src: '', label: 'untitled #06' },
+      { w: 320, h: 220, src: '', label: 'light study #1' },
+      { w: 380, h: 500, src: '', label: 'untitled #08' },
+    ]
+  },
+  {
+    num: '002',
+    name: 'the city at rest',
+    year: '2023',
+    count: '21 images',
+    desc: 'milan between 4 and 6 in the morning. silence as architecture. no one, or almost no one.',
+    images: [
+      { w: 500, h: 340, src: '', label: 'stazione centrale, 4:12am' },
+      { w: 260, h: 380, src: '', label: 'corso buenos aires' },
+      { w: 340, h: 480, src: '', label: 'navigli, sunday' },
+      { w: 440, h: 300, src: '', label: 'via brera' },
+      { w: 220, h: 320, src: '', label: 'untitled #05' },
+      { w: 480, h: 360, src: '', label: 'piazza duomo, 5am' },
+      { w: 300, h: 420, src: '', label: 'untitled #07' },
+    ]
+  },
+  {
+    num: '003',
+    name: 'domestic quiet',
+    year: '2022',
+    count: '18 images',
+    desc: 'ordinary objects, ordinary rooms. the invisible choreography of daily life. shot entirely on film.',
+    images: [
+      { w: 360, h: 480, src: '', label: 'kitchen, tuesday' },
+      { w: 440, h: 300, src: '', label: 'untitled #02' },
+      { w: 280, h: 380, src: '', label: 'window, afternoon' },
+      { w: 500, h: 360, src: '', label: 'untitled #04' },
+      { w: 320, h: 440, src: '', label: 'bedroom #3' },
+      { w: 240, h: 320, src: '', label: 'still life #1' },
+    ]
+  },
+  {
+    num: '004',
+    name: 'portraits, unposed',
+    year: '2021–22',
+    count: '27 images',
+    desc: 'people i know, caught in the middle of something else entirely. available as wet prints.',
+    images: [
+      { w: 340, h: 480, src: '', label: 'asli, milan' },
+      { w: 480, h: 340, src: '', label: 'marco, summer' },
+      { w: 280, h: 400, src: '', label: 'untitled #03' },
+      { w: 420, h: 280, src: '', label: 'elena, 2022' },
+      { w: 360, h: 500, src: '', label: 'untitled #05' },
+      { w: 300, h: 360, src: '', label: 'j., berlin' },
+      { w: 440, h: 320, src: '', label: 'untitled #07' },
+      { w: 260, h: 380, src: '', label: 'sofia' },
+    ]
+  },
+  // ── ADD A NEW SERIES: copy this block and fill it in ──
+  // {
+  //   num: '005',
+  //   name: 'your series name',
+  //   year: '2025',
+  //   count: '10 images',
+  //   desc: 'a short description of this series.',
+  //   images: [
+  //     { w: 400, h: 500, src: 'images/s5-01.jpg', label: 'caption here' },
+  //     { w: 300, h: 400, src: 'images/s5-02.jpg', label: 'caption here' },
+  //   ]
+  // },
+];
+
+/* ── BUILD HOME SERIES LIST ── */
+const homeList     = document.getElementById('homeSeriesList');
+const defaultImgs  = document.querySelectorAll('.floating-img');
+
+series.forEach((s, i) => {
+  const li = document.createElement('li');
+  const a  = document.createElement('a');
+  a.textContent = s.name;
+
+  a.addEventListener('mouseenter', () => {
+    defaultImgs.forEach(el => el.style.opacity = '0');
+    document.querySelectorAll('.series-imgs').forEach(el => el.classList.remove('visible'));
+    const si = document.getElementById('si-' + i);
+    if (si) si.classList.add('visible');
+  });
+
+  a.addEventListener('mouseleave', () => {
+    defaultImgs.forEach(el => el.style.opacity = '1');
+    document.querySelectorAll('.series-imgs').forEach(el => el.classList.remove('visible'));
+  });
+
+  a.addEventListener('click', () => openSeries(i));
+  li.appendChild(a);
+  homeList.appendChild(li);
+});
+
+/* ── OPEN SERIES DETAIL ── */
+function openSeries(i) {
+  const s = series[i];
+  document.getElementById('detail-title').textContent = s.name;
+  document.getElementById('detail-meta').textContent  = s.year + ' — ' + s.count;
+  document.getElementById('detail-desc').textContent  = s.desc;
+
+  const container = document.getElementById('detail-images');
+  container.innerHTML = '';
+
+  let idx = 0;
+  while (idx < s.images.length) {
+    const row      = document.createElement('div');
+    row.className  = 'img-row';
+    const remaining = s.images.length - idx;
+    const rowCount  = remaining >= 3 ? (Math.random() > 0.4 ? 3 : 2) : remaining;
+    const rowImgs   = s.images.slice(idx, idx + rowCount);
+    idx += rowCount;
+
+    rowImgs.forEach((img, j) => {
+      const block       = document.createElement('div');
+      block.className   = 'img-block';
+      const h = 180 + (j % 2 === 0 ? 80 : 0) + (Math.floor(j / 2) % 2 === 0 ? 40 : 0);
+      const w = rowCount === 3 ? '32%' : (j === 0 ? '55%' : '43%');
+      block.style.cssText = `height:${h}px; width:${w};`;
+
+      if (img.src) {
+        // real image
+        block.innerHTML = `
+          <img src="${img.src}" alt="${img.label}"
+               style="width:100%;height:100%;object-fit:cover;display:block;">
+          <div class="img-block-caption">${img.label}</div>`;
+      } else {
+        // placeholder
+        block.innerHTML = `
+          <span>${img.label}</span>
+          <div class="img-block-caption">${img.label}</div>`;
+      }
+
+      row.appendChild(block);
+    });
+
+    container.appendChild(row);
+  }
+
+  showPage('series-detail');
+}
+
+/* ── PAGE SWITCHER ── */
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  const pg = document.getElementById(name);
+  if (pg) { pg.classList.add('active', 'fade'); }
+  const navMap = {
+    'home':          'nav-home',
+    'series-detail': 'nav-home',
+    'about':         'nav-about',
+  };
+  const navEl = document.getElementById(navMap[name]);
+  if (navEl) navEl.classList.add('active');
+  window.scrollTo(0, 0);
+}
+</script>
+
+</body>
+</html>
