@@ -72,12 +72,14 @@ nav {
   width: 100%;
   height: 520px;
   overflow: hidden;
+  cursor: default;
 }
 
 .floating-img {
   position: absolute;
   overflow: hidden;
   transition: opacity 0.25s;
+  cursor: grab;
 }
 
 .ph {
@@ -98,7 +100,6 @@ nav {
 .si { position: absolute; overflow: hidden; }
 .si .ph { width: 100%; height: 100%; }
 
-/* Series hover layouts */
 .s1 .si-a { width: 300px; height: 380px; top: 10px;  left: 30px;  background: #ddd; }
 .s1 .si-b { width: 220px; height: 180px; top: 30px;  left: 350px; background: #d4d4d4; }
 .s1 .si-c { width: 190px; height: 260px; top: 230px; left: 370px; background: #e0e0e0; }
@@ -260,8 +261,6 @@ nav {
 <!-- HOME -->
 <div id="home" class="page active fade">
   <div class="home-images">
-
-    <!-- series hover sets -->
     <div class="series-imgs s1" id="si-0">
       <div class="si si-a"><div class="ph">— 01</div></div>
       <div class="si si-b"><div class="ph">— 02</div></div>
@@ -286,8 +285,7 @@ nav {
       <div class="si si-c"><div class="ph">— 03</div></div>
       <div class="si si-d"><div class="ph">— 04</div></div>
     </div>
-
-  </div><!-- /home-images -->
+  </div>
 
   <div class="home-bottom">
     <div class="project-links">
@@ -304,7 +302,7 @@ nav {
       </div>
     </div>
   </div>
-</div><!-- /home -->
+</div>
 
 <!-- SERIES DETAIL -->
 <div id="series-detail" class="page">
@@ -323,7 +321,6 @@ nav {
     <div class="about-left">
       <div class="about-portrait">
         <div class="ph">portrait</div>
-        <!-- <img src="images/portrait.jpg" alt="Matteo Montorfano" style="width:100%;height:100%;object-fit:cover;"> -->
       </div>
       <div class="contact-list">
         <div class="contact-block">
@@ -373,7 +370,7 @@ nav {
       </table>
     </div>
   </div>
-</div><!-- /about -->
+</div>
 
 <script>
 const series = [
@@ -411,15 +408,15 @@ const series = [
     count: '9 images',
     desc: '',
     images: [
-      { w: 500, h: 340, src: 'images/soreal1.jpg', label: '' },
-      { w: 260, h: 380, src: 'images/soreal2.jpg', label: '' },
-      { w: 340, h: 480, src: 'images/soreal3.jpg', label: '' },
-      { w: 440, h: 300, src: 'images/soreal4.jpg', label: '' },
-      { w: 220, h: 320, src: 'images/soreal5.jpg', label: '' },
-      { w: 480, h: 360, src: 'images/soreal6.jpg', label: '' },
-      { w: 300, h: 420, src: 'images/soreal7.jpg', label: '' },
-      { w: 380, h: 260, src: 'images/soreal8.jpg', label: '' },
-      { w: 240, h: 360, src: 'images/soreal9.jpg', label: '' },
+      { w: 500, h: 340, src: 'images/soreal1.jpg',  label: '' },
+      { w: 260, h: 380, src: 'images/soreal2.jpg',  label: '' },
+      { w: 340, h: 480, src: 'images/soreal3.jpg',  label: '' },
+      { w: 440, h: 300, src: 'images/soreal4.jpg',  label: '' },
+      { w: 220, h: 320, src: 'images/soreal5.jpg',  label: '' },
+      { w: 480, h: 360, src: 'images/soreal6.jpg',  label: '' },
+      { w: 300, h: 420, src: 'images/soreal7.jpg',  label: '' },
+      { w: 380, h: 260, src: 'images/soreal8.jpg',  label: '' },
+      { w: 240, h: 360, src: 'images/soreal9.jpg',  label: '' },
       { w: 240, h: 360, src: 'images/soreal10.jpg', label: '' },
       { w: 240, h: 360, src: 'images/soreal11.jpg', label: '' },
     ]
@@ -462,7 +459,7 @@ const series = [
   },
 ];
 
-/* ── RANDOMIZE HOME IMAGES ── */
+/* ── UTILITIES ── */
 function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -472,12 +469,14 @@ function shuffle(arr) {
   return a;
 }
 
+/* ── DRAG TO MOVE ── */
 function makeDraggable(block) {
-  let startX, startY, startLeft, startTop, moved;
+  let startX, startY, startLeft, startTop, didDrag;
 
   block.addEventListener('mousedown', (e) => {
+    e.preventDefault();
     e.stopPropagation();
-    moved     = false;
+    didDrag   = false;
     startX    = e.clientX;
     startY    = e.clientY;
     startLeft = parseInt(block.style.left) || 0;
@@ -486,7 +485,7 @@ function makeDraggable(block) {
     block.style.cursor = 'grabbing';
 
     function onMove(e) {
-      moved = true;
+      didDrag = true;
       block.style.left = (startLeft + e.clientX - startX) + 'px';
       block.style.top  = (startTop  + e.clientY - startY) + 'px';
     }
@@ -495,16 +494,27 @@ function makeDraggable(block) {
       block.style.cursor = 'grab';
       block.style.zIndex = '';
       document.removeEventListener('mousemove', onMove);
-      document.removeEventListener('mouseup',   onUp);
+      document.removeEventListener('mouseup', onUp);
+
+      // se c'e' stato trascinamento, blocca il prossimo click una volta sola
+      if (didDrag) {
+        document.addEventListener('click', stopClick, { capture: true, once: true });
+      }
     }
 
     document.addEventListener('mousemove', onMove);
-    document.addEventListener('mouseup',   onUp);
+    document.addEventListener('mouseup', onUp);
   });
 
   block.style.cursor = 'grab';
 }
 
+function stopClick(e) {
+  e.stopPropagation();
+  e.preventDefault();
+}
+
+/* ── SHUFFLE HOME IMAGES ── */
 function shuffleHomeImages() {
   const allSrcs = series.flatMap(s => s.images.map(img => img.src)).filter(src => src !== '');
   const picked  = shuffle(allSrcs).slice(0, 5);
@@ -517,7 +527,7 @@ function shuffleHomeImages() {
 
   picked.forEach((src) => {
     const block = document.createElement('div');
-    block.className  = 'floating-img';
+    block.className = 'floating-img';
     block.style.cssText = 'position:absolute; overflow:hidden; transition:opacity 0.25s;';
 
     const w = 160 + Math.floor(Math.random() * 180);
@@ -547,49 +557,11 @@ function shuffleHomeImages() {
 
 shuffleHomeImages();
 
-// click sull'area VUOTA rimescola — non sulle foto
-let wasDragging = false;
-
+// click sull'area VUOTA rimescola — dragging blocca il click con stopClick
 document.querySelector('.home-images').addEventListener('click', (e) => {
-  if (wasDragging) { wasDragging = false; return; }
   if (e.target === e.currentTarget) shuffleHomeImages();
 });
-shuffleHomeImages();
-document.querySelector('.home-images').addEventListener('click', shuffleHomeImages);
 
-/* ── DRAG TO MOVE IMAGES ── */
-function makeDraggable(block) {
-  let startX, startY, startLeft, startTop;
-
-  block.addEventListener('mousedown', (e) => {
-    e.stopPropagation(); // non triggera il click/shuffle
-    startX    = e.clientX;
-    startY    = e.clientY;
-    startLeft = parseInt(block.style.left) || 0;
-    startTop  = parseInt(block.style.top)  || 0;
-    block.style.zIndex = 10;
-    block.style.cursor = 'grabbing';
-
-    function onMove(e) {
-  moved = true;
-  wasDragging = true; // ← aggiungi questa
-  block.style.left = (startLeft + e.clientX - startX) + 'px';
-  block.style.top  = (startTop  + e.clientY - startY) + 'px';
-}
-
-    function onUp() {
-      block.style.cursor = 'grab';
-      block.style.zIndex = '';
-      document.removeEventListener('mousemove', onMove);
-      document.removeEventListener('mouseup',   onUp);
-    }
-
-    document.addEventListener('mousemove', onMove);
-    document.addEventListener('mouseup',   onUp);
-  });
-
-  block.style.cursor = 'grab';
-}
 /* ── BUILD HOME SERIES LIST ── */
 const homeList    = document.getElementById('homeSeriesList');
 const defaultImgs = () => document.querySelectorAll('.floating-img');
