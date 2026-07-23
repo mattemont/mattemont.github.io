@@ -494,7 +494,7 @@ const picked = shuffle(allSrcs).slice(0, 5);
       block.innerHTML = `<img src="${src}" alt=""
         style="width:100%;height:100%;object-fit:cover;display:block;">`;
 
-      area.appendChild(block);
+      makeDraggable(block);
     };
     tempImg.src = src;
   });
@@ -502,6 +502,38 @@ const picked = shuffle(allSrcs).slice(0, 5);
 
 shuffleHomeImages();
 document.querySelector('.home-images').addEventListener('click', shuffleHomeImages);
+
+/* ── DRAG TO MOVE IMAGES ── */
+function makeDraggable(block) {
+  let startX, startY, startLeft, startTop;
+
+  block.addEventListener('mousedown', (e) => {
+    e.stopPropagation(); // non triggera il click/shuffle
+    startX    = e.clientX;
+    startY    = e.clientY;
+    startLeft = parseInt(block.style.left) || 0;
+    startTop  = parseInt(block.style.top)  || 0;
+    block.style.zIndex = 10;
+    block.style.cursor = 'grabbing';
+
+    function onMove(e) {
+      block.style.left = (startLeft + e.clientX - startX) + 'px';
+      block.style.top  = (startTop  + e.clientY - startY) + 'px';
+    }
+
+    function onUp() {
+      block.style.cursor = 'grab';
+      block.style.zIndex = '';
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup',   onUp);
+    }
+
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup',   onUp);
+  });
+
+  block.style.cursor = 'grab';
+}
 /* ── BUILD HOME SERIES LIST ── */
 const homeList    = document.getElementById('homeSeriesList');
 const defaultImgs = () => document.querySelectorAll('.floating-img');
