@@ -451,8 +451,16 @@ function shuffleHomeImages() {
   const allSrcs = series.flatMap(s => s.images.map(img => img.src)).filter(src => src !== '');
 
   // mescola e prende 5 a caso
-  const picked = allSrcs.sort(() => Math.random() - 0.5).slice(0, 5);
-
+  // Fisher-Yates shuffle — distribuzione veramente uniforme
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+const picked = shuffle(allSrcs).slice(0, 5);
   const area  = document.querySelector('.home-images');
   const areaW = area.offsetWidth;
   const areaH = area.offsetHeight;
@@ -493,7 +501,7 @@ function shuffleHomeImages() {
 }
 
 shuffleHomeImages();
-
+document.querySelector('.home-images').addEventListener('click', shuffleHomeImages);
 /* ── BUILD HOME SERIES LIST ── */
 const homeList    = document.getElementById('homeSeriesList');
 const defaultImgs = () => document.querySelectorAll('.floating-img');
