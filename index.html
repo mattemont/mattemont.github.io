@@ -446,12 +446,6 @@ const series = [
 ];
 
 /* ── RANDOMIZE HOME IMAGES ── */
-function shuffleHomeImages() {
-  // raccoglie tutti i src dalle serie
-  const allSrcs = series.flatMap(s => s.images.map(img => img.src)).filter(src => src !== '');
-
-  // mescola e prende 5 a caso
-  // Fisher-Yates shuffle — distribuzione veramente uniforme
 function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -460,45 +454,86 @@ function shuffle(arr) {
   }
   return a;
 }
-const picked = shuffle(allSrcs).slice(0, 5);
+
+function makeDraggable(block) {
+  let startX, startY, startLeft, startTop, moved;
+
+  block.addEventListener('mousedown', (e) => {
+    e.stopPropagation();
+    moved     = false;
+    startX    = e.clientX;
+    startY    = e.clientY;
+    startLeft = parseInt(block.style.left) || 0;
+    startTop  = parseInt(block.style.top)  || 0;
+    block.style.zIndex = 10;
+    block.style.cursor = 'grabbing';
+
+    function onMove(e) {
+      moved = true;
+      block.style.left = (startLeft + e.clientX - startX) + 'px';
+      block.style.top  = (startTop  + e.clientY - startY) + 'px';
+    }
+
+    function onUp() {
+      block.style.cursor = 'grab';
+      block.style.zIndex = '';
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup',   onUp);
+    }
+
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup',   onUp);
+  });
+
+  block.style.cursor = 'grab';
+}
+
+function shuffleHomeImages() {
+  const allSrcs = series.flatMap(s => s.images.map(img => img.src)).filter(src => src !== '');
+  const picked  = shuffle(allSrcs).slice(0, 5);
+
   const area  = document.querySelector('.home-images');
   const areaW = area.offsetWidth;
   const areaH = area.offsetHeight;
 
-  // rimuove eventuali floating-img esistenti
   document.querySelectorAll('.floating-img').forEach(el => el.remove());
 
   picked.forEach((src) => {
     const block = document.createElement('div');
-    block.className = 'floating-img';
+    block.className  = 'floating-img';
     block.style.cssText = 'position:absolute; overflow:hidden; transition:opacity 0.25s;';
 
-    // larghezza casuale tra 160px e 340px
     const w = 160 + Math.floor(Math.random() * 180);
 
-    // carica l'immagine per leggere le proporzioni reali
     const tempImg = new Image();
     tempImg.onload = function () {
       const ratio = this.naturalHeight / this.naturalWidth;
-      const h = Math.round(w * ratio);
+      const h     = Math.round(w * ratio);
 
       block.style.width  = w + 'px';
       block.style.height = h + 'px';
 
-      // posizione casuale che non esca fuori dall'area
       const maxX = Math.max(0, areaW - w - 20);
       const maxY = Math.max(0, areaH - h - 20);
       block.style.left = (20 + Math.floor(Math.random() * maxX)) + 'px';
       block.style.top  = (10 + Math.floor(Math.random() * maxY)) + 'px';
 
       block.innerHTML = `<img src="${src}" alt=""
-        style="width:100%;height:100%;object-fit:cover;display:block;">`;
+        style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;">`;
 
+      area.appendChild(block);
       makeDraggable(block);
     };
     tempImg.src = src;
   });
 }
+
+shuffleHomeImages();
+
+// click sull'area VUOTA rimescola — non sulle foto
+document.querySelector('.home-images').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) shuffleHomeImages();
+});
 
 shuffleHomeImages();
 document.querySelector('.home-images').addEventListener('click', shuffleHomeImages);
