@@ -6,13 +6,13 @@
 
 <!--
   ╔══════════════════════════════════════════════════════╗
-  ║         YOUR NAME — PHOTOGRAPHY PORTFOLIO           ║
+  ║         Matteo Montorfano — PHOTOGRAPHY PORTFOLIO           ║
   ║                                                      ║
   ║  HOW TO CUSTOMIZE:                                   ║
-  ║  1. Search for "YOUR NAME" and replace everywhere    ║
-  ║  2. Search for "YOUR CITY" and replace               ║
-  ║  3. Search for "your-email@example.com" and replace  ║
-  ║  4. Search for "@yourhandle" and replace             ║
+  ║  1. Search for "Matteo Montorfano" and replace everywhere    ║
+  ║  2. Search for "Milan" and replace               ║
+  ║  3. Search for "mattemont99@gmail.com" and replace  ║
+  ║  4. Search for "@this.monto" and replace             ║
   ║  5. Edit the SERIES DATA section below (~line 280)   ║
   ║  6. Replace placeholder <div class="ph"> with        ║
   ║     real <img src="images/yourphoto.jpg"> tags       ║
@@ -37,8 +37,8 @@
     <img src="images/your-photo.jpg" alt="description" style="width:100%;height:100%;object-fit:cover;">
 -->
 
-<title>YOUR NAME — Photography</title>
-<meta name="description" content="YOUR NAME — photographer based in YOUR CITY">
+<title> Matteo Montorfano — Photography</title>
+<meta name="description" content="Matteo Montorfano — photographer based in Milan">
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap');
@@ -331,7 +331,7 @@ nav {
 }
 
 /* TO ADD YOUR PORTRAIT: replace the <div class="ph"> inside .about-portrait with:
-   <img src="images/portrait.jpg" alt="your name" style="width:100%;height:100%;object-fit:cover;"> */
+   <img src="images/portrait.jpg" alt="Matteo Montorfano" style="width:100%;height:100%;object-fit:cover;"> */
 
 .about-social { font-size: 11px; color: var(--muted); line-height: 2.2; }
 .about-social a { color: var(--muted); }
@@ -374,10 +374,10 @@ nav {
 
 <!-- ══════════════════════════════════
      NAVIGATION
-     Change "your name." to your name
+     Change "Matteo Montorfano." to Matteo Montorfano
 ══════════════════════════════════ -->
 <nav>
-  <div class="nav-name" onclick="showPage('home')">your name.</div>
+  <div class="nav-name" onclick="showPage('home')">Matteo Montorfano.</div>
   <ul class="nav-links">
     <li><a onclick="showPage('home')"  id="nav-home"  class="active">work</a></li>
     <li><a onclick="showPage('about')" id="nav-about">about</a></li>
@@ -445,7 +445,7 @@ nav {
     <div class="home-info">
       <div class="terminal-line">visitor@yourname.com:~$ <span class="cursor"></span></div>
       <div class="status-line">
-        photographer — YOUR CITY<br>
+        photographer — Milan<br>
         © 2025 — all rights reserved<br>
         <span style="color:#ddd;">————————————————</span><br>
         open for commissions
@@ -482,18 +482,18 @@ nav {
       <!-- YOUR PORTRAIT — replace the div.ph with an <img> tag -->
       <div class="about-portrait">
         <div class="ph">portrait</div>
-        <!-- <img src="images/portrait.jpg" alt="your name" style="width:100%;height:100%;object-fit:cover;"> -->
+        <!-- <img src="images/portrait.jpg" alt="Matteo Montorfano" style="width:100%;height:100%;object-fit:cover;"> -->
       </div>
 
       <!-- EDIT YOUR CONTACT LINKS HERE -->
       <div class="contact-list">
         <div class="contact-block">
           <small>email</small>
-          <a href="mailto:your-email@example.com">your-email@example.com</a>
+          <a href="mailto:mattemont99@gmail.com">mattemont99@gmail.com</a>
         </div>
         <div class="contact-block">
           <small>instagram</small>
-          <a href="https://instagram.com/yourhandle" target="_blank">@yourhandle</a>
+          <a href="https://instagram.com/yourhandle" target="_blank">@this.monto</a>
         </div>
         <div class="contact-block">
           <small>are.na</small>
@@ -520,7 +520,7 @@ nav {
         light, silence, grain.
       </h2>
       <p>
-        based in YOUR CITY. working with natural light and analogue
+        based in Milan. working with natural light and analogue
         processes since 2014. my practice spans portraiture, urban
         landscape, and long-form series.
       </p>
@@ -531,7 +531,7 @@ nav {
 
       <!-- EDIT YOUR INFO TABLE HERE -->
       <table class="about-table">
-        <tr><td>based</td>    <td>YOUR CITY, Italy</td></tr>
+        <tr><td>based</td>    <td>Milan, Italy</td></tr>
         <tr><td>camera</td>   <td>leica m6 / contax t2</td></tr>
         <tr><td>film</td>     <td>kodak tri-x 400, ilford hp5</td></tr>
         <tr><td>darkroom</td> <td>wet print, analogue</td></tr>
@@ -639,7 +639,64 @@ const series = [
   //   ]
   // },
 ];
+/* ── RANDOMIZE HOME IMAGES ── */
+function shuffleHomeImages() {
+  const imgs = [
+    'images/impulsi1.jpg',
+    'images/impulsi2.jpg',
+    'images/impulsi3.jpg',
+    'images/impulsi4.jpg',
+    'images/impulsi5.jpg',
+    'images/impulsi6.jpg',
+    'images/impulsi7.jpg',
+    'images/impulsi8.jpg',
+    'images/impulsi9.jpg',
+    'images/impulsi10.jpg',
+    'images/impulsi11.jpg',
+    'images/impulsi12.jpg',
+    'images/impulsi13.jpg',
+    'images/impulsi14.jpg',
+    'images/soreal1.jpg',
+    'images/soreal2.jpg',
+    'images/soreal3.jpg',
+    'images/soreal4.jpg',
+    'images/soreal5.jpg',
+    'images/soreal6.jpg',
+    'images/soreal7.jpg',
+    'images/soreal8.jpg',
+    'images/soreal9.jpg',
+    'images/wila1.jpg',
+    'images/wila2.jpg',
+    'images/wila3.jpg',
+    'images/wila4.jpg',
+    'images/wila5.jpg',
+    'images/wila6.jpg',
+    'images/wila7.jpg',
+    'images/wila8.jpg',
+    'images/wila9.jpg',
+    'images/wila10.jpg',
+    'images/wila11.jpg',
+    'images/wila12.jpg',
+    'images/wila13.jpg',
+    'images/wila14.jpg',
+    'images/wila15.jpg',
+    'images/wila16.jpg',
+  ];
 
+  // mescola l'array
+  imgs.sort(() => Math.random() - 0.5);
+
+  // assegna le immagini ai blocchi
+  const blocks = document.querySelectorAll('.floating-img');
+  blocks.forEach((block, i) => {
+    if (imgs[i]) {
+      block.innerHTML = `<img src="${imgs[i]}" alt=""
+        style="width:100%;height:100%;object-fit:cover;">`;
+    }
+  });
+}
+
+shuffleHomeImages();
 /* ── BUILD HOME SERIES LIST ── */
 const homeList     = document.getElementById('homeSeriesList');
 const defaultImgs  = document.querySelectorAll('.floating-img');
