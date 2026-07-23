@@ -548,10 +548,12 @@ function shuffleHomeImages() {
 shuffleHomeImages();
 
 // click sull'area VUOTA rimescola — non sulle foto
+let wasDragging = false;
+
 document.querySelector('.home-images').addEventListener('click', (e) => {
+  if (wasDragging) { wasDragging = false; return; }
   if (e.target === e.currentTarget) shuffleHomeImages();
 });
-
 shuffleHomeImages();
 document.querySelector('.home-images').addEventListener('click', shuffleHomeImages);
 
@@ -569,9 +571,11 @@ function makeDraggable(block) {
     block.style.cursor = 'grabbing';
 
     function onMove(e) {
-      block.style.left = (startLeft + e.clientX - startX) + 'px';
-      block.style.top  = (startTop  + e.clientY - startY) + 'px';
-    }
+  moved = true;
+  wasDragging = true; // ← aggiungi questa
+  block.style.left = (startLeft + e.clientX - startX) + 'px';
+  block.style.top  = (startTop  + e.clientY - startY) + 'px';
+}
 
     function onUp() {
       block.style.cursor = 'grab';
