@@ -554,7 +554,47 @@ function shuffleHomeImages() {
     tempImg.src = src;
   });
 }
+/* ── SERIES HOVER PREVIEW ── */
+function showSeriesPreview(seriesIdx) {
+  document.querySelectorAll('.preview-img').forEach(el => el.remove());
 
+  const s       = series[seriesIdx];
+  const srcs    = shuffle(s.images.map(img => img.src).filter(src => src !== ''));
+  const picked  = srcs.slice(0, 5);
+
+  const area  = document.querySelector('.home-images');
+  const areaW = area.offsetWidth;
+  const areaH = area.offsetHeight;
+
+  picked.forEach((src) => {
+    const block = document.createElement('div');
+    block.className = 'preview-img';
+    block.style.cssText = 'position:absolute; overflow:hidden; transition:opacity 0.2s; opacity:0;';
+
+    const w = 160 + Math.floor(Math.random() * 180);
+
+    const tempImg = new Image();
+    tempImg.onload = function () {
+      const ratio = this.naturalHeight / this.naturalWidth;
+      const h     = Math.round(w * ratio);
+
+      block.style.width  = w + 'px';
+      block.style.height = h + 'px';
+
+      const maxX = Math.max(0, areaW - w - 20);
+      const maxY = Math.max(0, areaH - h - 20);
+      block.style.left = (20 + Math.floor(Math.random() * maxX)) + 'px';
+      block.style.top  = (10 + Math.floor(Math.random() * maxY)) + 'px';
+
+      block.innerHTML = `<img src="${src}" alt=""
+        style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;">`;
+
+      area.appendChild(block);
+      requestAnimationFrame(() => { block.style.opacity = '1'; });
+    };
+    tempImg.src = src;
+  });
+}
 shuffleHomeImages();
 
 // click sull'area VUOTA rimescola — dragging blocca il click con stopClick
@@ -571,16 +611,14 @@ series.forEach((s, i) => {
   const a  = document.createElement('a');
   a.textContent = s.name;
 
-  a.addEventListener('mouseenter', () => {
+ a.addEventListener('mouseenter', () => {
     defaultImgs().forEach(el => el.style.opacity = '0');
-    document.querySelectorAll('.series-imgs').forEach(el => el.classList.remove('visible'));
-    const si = document.getElementById('si-' + i);
-    if (si) si.classList.add('visible');
+    showSeriesPreview(i);
   });
 
   a.addEventListener('mouseleave', () => {
     defaultImgs().forEach(el => el.style.opacity = '1');
-    document.querySelectorAll('.series-imgs').forEach(el => el.classList.remove('visible'));
+    document.querySelectorAll('.preview-img').forEach(el => el.remove());
   });
 
   a.addEventListener('click', () => openSeries(i));
