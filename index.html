@@ -500,7 +500,7 @@ function showSeriesPreview(seriesIdx) {
 }
 
 /* ── SERIES DETAIL ── */
-function openSeries(i) {
+unction openSeries(i) {
   const s      = series[i];
   const canvas = document.getElementById('detail-canvas');
 
@@ -509,10 +509,15 @@ function openSeries(i) {
   document.getElementById('detail-desc').textContent  = s.desc;
 
   canvas.innerHTML = '';
-  placeImages(shuffle(s.images), canvas, true);
   showPage('series-detail');
-}
 
+  // aspetta che la pagina sia visibile e il canvas abbia dimensioni reali
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      placeImages(shuffle(s.images), canvas, true);
+    });
+  });
+}
 /* ── INIT ── */
 shuffleHomeImages();
 
