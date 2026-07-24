@@ -132,19 +132,19 @@ nav {
   max-width: 60ch; line-height: 1.8;
 }
 
-/* masonry-style photo grid */
+/* freeform photo layout */
 .detail-grid {
-  columns: 4;
-  column-gap: 3px;
-  padding: 20px 20px 60px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0;
+  padding: 40px 40px 80px;
 }
 
 .detail-grid-item {
-  break-inside: avoid;
-  margin-bottom: 4px;
   overflow: hidden;
   cursor: zoom-in;
-  display: block;
+  margin: 8px;
 }
 
 .detail-grid-item img {
@@ -155,7 +155,7 @@ nav {
 }
 
 .detail-grid-item:hover img {
-  opacity: 0.88;
+  opacity: 0.85;
 }
 
 /* LIGHTBOX */
@@ -537,9 +537,24 @@ function openSeries(i) {
   // shuffle order for variety
   const srcs = shuffle(s.images);
 
+  // size buckets: small, medium, large, tall — assigned randomly
+  const sizes = [
+    { w: '160px' },
+    { w: '200px' },
+    { w: '260px' },
+    { w: '180px' },
+    { w: '300px' },
+    { w: '140px' },
+    { w: '220px' },
+    { w: '240px' },
+  ];
+
   srcs.forEach((src, idx) => {
     const item = document.createElement('div');
     item.className = 'detail-grid-item';
+    // pick a random width from the size buckets
+    const size = sizes[Math.floor(Math.random() * sizes.length)];
+    item.style.width = size.w;
     item.innerHTML = `<img src="${src}" alt="" loading="lazy">`;
     item.addEventListener('click', () => openLightbox(srcs, idx));
     grid.appendChild(item);
