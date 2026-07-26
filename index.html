@@ -22,7 +22,7 @@ body {
   font-family: var(--font);
   background: var(--bg);
   color: var(--ink);
-  font-size: 15px;
+  font-size: 13px;
   line-height: 1.5;
   overflow-x: hidden;
 }
@@ -132,7 +132,6 @@ nav {
   max-width: 60ch; line-height: 1.8;
 }
 
-/* freeform photo layout */
 .detail-grid {
   display: flex;
   flex-wrap: wrap;
@@ -154,9 +153,7 @@ nav {
   transition: opacity 0.2s;
 }
 
-.detail-grid-item:hover img {
-  opacity: 0.85;
-}
+.detail-grid-item:hover img { opacity: 0.85; }
 
 /* LIGHTBOX */
 .lightbox {
@@ -170,65 +167,98 @@ nav {
   cursor: zoom-out;
 }
 .lightbox.active { display: flex; }
-
 .lightbox img {
   max-width: 90vw;
   max-height: 90vh;
   object-fit: contain;
   display: block;
 }
-
 .lightbox-close {
   position: fixed;
   top: 20px; right: 24px;
-  font-size: 11px;
-  color: var(--muted);
-  cursor: pointer;
-  font-family: var(--font);
-  letter-spacing: 0.05em;
+  font-size: 11px; color: var(--muted); cursor: pointer;
+  font-family: var(--font); letter-spacing: 0.05em;
 }
 .lightbox-close:hover { color: var(--ink); }
-
-/* prev / next */
-.lightbox-prev,
-.lightbox-next {
-  position: fixed;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 11px;
-  color: var(--muted);
-  cursor: pointer;
-  font-family: var(--font);
-  letter-spacing: 0.05em;
-  padding: 20px;
+.lightbox-prev, .lightbox-next {
+  position: fixed; top: 50%; transform: translateY(-50%);
+  font-size: 11px; color: var(--muted); cursor: pointer;
+  font-family: var(--font); letter-spacing: 0.05em; padding: 20px;
 }
 .lightbox-prev { left: 16px; }
 .lightbox-next { right: 60px; }
 .lightbox-prev:hover, .lightbox-next:hover { color: var(--ink); }
 
-/* ABOUT */
-#about { padding-top: 80px; }
-.about-grid { display: grid; grid-template-columns: 1fr 1fr; min-height: calc(100vh - 80px); }
-.about-left { border-right: 1px solid var(--border); padding: 32px 20px; display: flex; flex-direction: column; gap: 40px; }
-.about-portrait {
-  width: 100%; aspect-ratio: 3/4;
-  background: #e8e8e8;
-  display: flex; align-items: center; justify-content: center;
-  font-style: italic; color: #bbb; font-size: 11px;
+/* ABOUT — no scroll, tutto in viewport */
+#about {
+  padding-top: 80px;
+  height: 100vh;
   overflow: hidden;
 }
-.about-right { padding: 32px 20px; }
-.about-right h2 { font-size: 13px; font-weight: 400; font-style: italic; margin-bottom: 24px; line-height: 1.8; }
-.about-right p { font-size: 12px; color: #555; margin-bottom: 16px; line-height: 1.8; max-width: 42ch; }
-.about-table { margin-top: 40px; width: 100%; border-collapse: collapse; }
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: calc(100vh - 80px);
+}
+
+.about-left {
+  border-right: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+/* slideshow foto al posto del ritratto */
+.about-slideshow {
+  position: absolute;
+  inset: 0;
+}
+
+.about-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.about-slide.active { opacity: 1; }
+
+.about-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.about-right {
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.about-right h2 {
+  font-size: 13px; font-weight: 400; font-style: italic;
+  line-height: 1.8; margin-bottom: 20px;
+}
+
+.about-right p {
+  font-size: 12px; color: #555;
+  margin-bottom: 12px; line-height: 1.8; max-width: 42ch;
+}
+
+.about-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
 .about-table tr { border-top: 1px solid var(--border); }
-.about-table td { padding: 8px 0; font-size: 11px; vertical-align: top; }
-.about-table td:first-child { color: var(--muted); width: 120px; }
-.contact-block small { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
-.contact-block a, .contact-block span { font-size: 13px; font-style: italic; color: var(--ink); }
+.about-table td { padding: 6px 0; font-size: 11px; vertical-align: top; }
+.about-table td:first-child { color: var(--muted); width: 100px; }
+
+.contact-list { display: flex; flex-direction: column; gap: 14px; }
+.contact-block small { display: block; font-size: 11px; color: var(--muted); margin-bottom: 2px; }
+.contact-block a { font-size: 13px; font-style: italic; color: var(--ink); }
 .contact-block a:hover { text-decoration: underline; }
-.contact-list { display: flex; flex-direction: column; gap: 20px; margin-top: 8px; }
-.error-block { margin-top: 40px; font-size: 11px; color: #bbb; line-height: 2; }
+
+.error-block { font-size: 11px; color: #bbb; line-height: 2; margin-top: auto; }
 </style>
 </head>
 <body>
@@ -275,37 +305,43 @@ nav {
 <!-- ABOUT -->
 <div id="about" class="page">
   <div class="about-grid">
+
     <div class="about-left">
-      <div class="about-portrait">
-        <div class="ph">portrait</div>
-        <!-- <img src="images/portrait.jpg" alt="Matteo Montorfano" style="width:100%;height:100%;object-fit:cover;"> -->
-      </div>
-      <div class="contact-list">
-        <div class="contact-block">
-          <small>email</small>
-          <a href="mailto:mattemont99@gmail.com">mattemont99@gmail.com</a>
-        </div>
-        <div class="contact-block">
-          <small>instagram</small>
-          <a href="https://instagram.com/this.monto" target="_blank">@this.monto</a>
-        </div>
-        <div class="contact-block">
-        —<br>
-        open for commissions.<br>
-        visitor@matteomontorfano.com:~$ <span class="cursor"></span>
-      </div>
+      <div class="about-slideshow" id="aboutSlideshow"></div>
     </div>
+
     <div class="about-right">
-      <h2>i photograph the spaces<br>between things —<br>light, silence, grain.</h2>
-      <p>based in Milan. working with natural light and analogue processes since 2014. my practice spans portraiture, urban landscape, and long-form series.</p>
-      <p>i have collaborated with independent publishers, galleries, and editorial clients across europe. prints available on request.</p>
-      <table class="about-table">
-        <tr><td>based</td>    <td>Milan, Italy</td></tr>
-        <tr><td>darkroom</td> <td>Black-and-white, film development, Color film development,<td> RA-4 color printing from color negatives, Black-and-white darkroom printing,<td>from black-and-white negatives
-         Historical / alternative photographic processes</td></tr>
-        <tr><td>available</td><td>commissions, editorial, prints</td></tr>
-      </table>
+      <div>
+        <h2>i photograph the spaces<br>between things —<br>light, silence, grain.</h2>
+        <p>based in Milan. working with natural light and analogue processes. my practice spans portraiture, urban landscape, and long-form series.</p>
+        <p>i have collaborated with independent publishers, galleries, and editorial clients across europe. prints available on request.</p>
+
+        <table class="about-table">
+          <tr><td>based</td>    <td>Milan, Italy</td></tr>
+          <tr><td>darkroom</td> <td>b&w and color film, RA-4 printing, alternative processes</td></tr>
+          <tr><td>available</td><td>commissions, editorial, prints</td></tr>
+        </table>
+      </div>
+
+      <div>
+        <div class="contact-list">
+          <div class="contact-block">
+            <small>email</small>
+            <a href="mailto:mattemont99@gmail.com">mattemont99@gmail.com</a>
+          </div>
+          <div class="contact-block">
+            <small>instagram</small>
+            <a href="https://instagram.com/this.monto" target="_blank">@this.monto</a>
+          </div>
+        </div>
+        <div class="error-block">
+          —<br>
+          open for commissions.<br>
+          visitor@matteomontorfano.com:~$ <span class="cursor"></span>
+        </div>
+      </div>
     </div>
+
   </div>
 </div>
 
@@ -320,7 +356,7 @@ nav {
 <script>
 const series = [
   {
-    num: '001', name: 'Ciondolasi Continuo', year: '2025 - On going', desc: '',
+    num: '001', name: 'impulsi', year: '2024', count: '18 images', desc: '',
     images: [
       'images/impulsi1.jpg','images/impulsi2.jpg','images/impulsi3.jpg',
       'images/impulsi4.jpg','images/impulsi5.jpg','images/impulsi6.jpg',
@@ -331,7 +367,7 @@ const series = [
     ]
   },
   {
-    num: '002', name: 'So Real', year: '2023 - On Going', desc: '',
+    num: '002', name: 'so real', year: '2023', count: '11 images', desc: '',
     images: [
       'images/soreal1.jpg','images/soreal2.jpg','images/soreal3.jpg',
       'images/soreal4.jpg','images/soreal5.jpg','images/soreal6.jpg',
@@ -340,7 +376,7 @@ const series = [
     ]
   },
   {
-    num: '003', name: 'Wiła', year: '2024 - On Going', desc: '',
+    num: '003', name: 'wila', year: '2022', count: '27 images', desc: '',
     images: [
       'images/wila1.jpg','images/wila2.jpg','images/wila3.jpg',
       'images/wila4.jpg','images/wila5.jpg','images/wila6.jpg',
@@ -365,6 +401,42 @@ function shuffle(arr) {
   return a;
 }
 
+/* ── ABOUT SLIDESHOW ── */
+let slideshowInterval = null;
+let slideIdx = 0;
+
+function initSlideshow() {
+  const container = document.getElementById('aboutSlideshow');
+  container.innerHTML = '';
+
+  const allSrcs = shuffle(series.flatMap(s => s.images));
+
+  allSrcs.forEach((src, i) => {
+    const slide = document.createElement('div');
+    slide.className = 'about-slide' + (i === 0 ? ' active' : '');
+    slide.innerHTML = `<img src="${src}" alt="" loading="lazy">`;
+    container.appendChild(slide);
+  });
+
+  slideIdx = 0;
+}
+
+function startSlideshow() {
+  if (slideshowInterval) clearInterval(slideshowInterval);
+  slideshowInterval = setInterval(() => {
+    const slides = document.querySelectorAll('.about-slide');
+    if (!slides.length) return;
+    slides[slideIdx].classList.remove('active');
+    slideIdx = (slideIdx + 1) % slides.length;
+    slides[slideIdx].classList.add('active');
+  }, 1800);
+}
+
+function stopSlideshow() {
+  if (slideshowInterval) clearInterval(slideshowInterval);
+  slideshowInterval = null;
+}
+
 /* ── LIGHTBOX ── */
 let lightboxSrcs = [];
 let lightboxIdx  = 0;
@@ -387,21 +459,20 @@ function closeLightbox() {
 }
 
 document.getElementById('lightbox').addEventListener('click', (e) => {
-  const tag = e.target.tagName;
-  if (tag !== 'IMG' && tag !== 'SPAN') closeLightbox();
+  if (e.target.tagName !== 'IMG' && e.target.tagName !== 'SPAN') closeLightbox();
 });
 
 document.addEventListener('keydown', (e) => {
   if (!document.getElementById('lightbox').classList.contains('active')) return;
-  if (e.key === 'Escape')      closeLightbox();
-  if (e.key === 'ArrowRight')  lightboxStep(+1);
-  if (e.key === 'ArrowLeft')   lightboxStep(-1);
+  if (e.key === 'Escape')     closeLightbox();
+  if (e.key === 'ArrowRight') lightboxStep(+1);
+  if (e.key === 'ArrowLeft')  lightboxStep(-1);
 });
 
 /* ── STOP CLICK AFTER DRAG ── */
 function stopClick(e) { e.stopPropagation(); e.preventDefault(); }
 
-/* ── MAKE DRAGGABLE (home only) ── */
+/* ── MAKE DRAGGABLE ── */
 function makeDraggable(block) {
   let startX, startY, startLeft, startTop, didDrag;
 
@@ -513,7 +584,7 @@ function showSeriesPreview(seriesIdx) {
   });
 }
 
-/* ── SERIES DETAIL: masonry grid ── */
+/* ── SERIES DETAIL ── */
 function openSeries(i) {
   const s    = series[i];
   const grid = document.getElementById('detail-grid');
@@ -524,22 +595,13 @@ function openSeries(i) {
 
   grid.innerHTML = '';
 
-  // shuffle order for variety
-  const srcs = shuffle(s.images);
-
-  // size buckets: small, medium, large, tall — assigned randomly
-  const sizes = [
-    { w: '260px' },
-    { w: '240px' },
-    { w: '300px' },
-  ];
+  const srcs  = shuffle(s.images);
+  const sizes = ['180px', '240px', '320px'];
 
   srcs.forEach((src, idx) => {
     const item = document.createElement('div');
     item.className = 'detail-grid-item';
-    // pick a random width from the size buckets
-    const size = sizes[Math.floor(Math.random() * sizes.length)];
-    item.style.width = size.w;
+    item.style.width = sizes[Math.floor(Math.random() * sizes.length)];
     item.innerHTML = `<img src="${src}" alt="" loading="lazy">`;
     item.addEventListener('click', () => openLightbox(srcs, idx));
     grid.appendChild(item);
@@ -550,6 +612,8 @@ function openSeries(i) {
 
 /* ── INIT ── */
 shuffleHomeImages();
+initSlideshow();
+
 document.querySelector('.home-images').addEventListener('click', (e) => {
   if (e.target === e.currentTarget) shuffleHomeImages();
 });
@@ -585,6 +649,13 @@ function showPage(name) {
   const navEl = document.getElementById(navMap[name]);
   if (navEl) navEl.classList.add('active');
   window.scrollTo(0, 0);
+
+  // gestisci slideshow
+  if (name === 'about') {
+    startSlideshow();
+  } else {
+    stopSlideshow();
+  }
 }
 </script>
 </body>
