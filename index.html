@@ -262,16 +262,16 @@ nav {
 .about-slide.active { opacity: 1; }
 .about-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-.shatter-overlay {
+.erase-mask {
   position: absolute;
-  inset: 0;
-  z-index: 5;
+  background: var(--bg);
   pointer-events: none;
 }
-.shatter-tile {
+.debris-frag {
   position: absolute;
-  background-repeat: no-repeat;
-  will-change: opacity, transform;
+  pointer-events: none;
+  will-change: transform;
+  transition: opacity 0.4s ease;
 }
 
 .about-right {
@@ -515,93 +515,23 @@ function initSlideshow() {
   slideIdx = 0;
 }
 
-let isShattering = false;
-
 function startSlideshow() {
   if (slideshowInterval) clearInterval(slideshowInterval);
-  slideshowInterval = setInterval(shatterTransition, 3200);
+  slideshowInterval = setInterval(() => {
+    const slides = document.querySelectorAll('.about-slide');
+    if (!slides.length) return;
+    const old = slides[slideIdx];
+    old.classList.remove('active');
+    old.querySelectorAll('.erase-mask').forEach(m => m.remove());
+    old._cleared = null;
+    slideIdx = (slideIdx + 1) % slides.length;
+    slides[slideIdx].classList.add('active');
+  }, 1800);
 }
 
 function stopSlideshow() {
   if (slideshowInterval) clearInterval(slideshowInterval);
   slideshowInterval = null;
-  const overlay = document.querySelector('.shatter-overlay');
-  if (overlay) overlay.remove();
-  isShattering = false;
-}
-
-/* ── PIXEL SHATTER TRANSITION ──
-   Copre la slide corrente con una griglia di piccole tile che si sgretolano
-   (fade + scala + piccola rotazione, con delay scaglionato) rivelando la
-   slide successiva già presente sotto. */
-function shatterTransition() {
-  if (isShattering) return;
-  const slides = document.querySelectorAll('.about-slide');
-  if (slides.length < 2) return;
-  isShattering = true;
-
-  const container   = document.getElementById('aboutSlideshow');
-  const currentSlide = slides[slideIdx];
-  const nextIdx      = (slideIdx + 1) % slides.length;
-  const nextSlide    = slides[nextIdx];
-  const currentImg   = currentSlide.querySelector('img');
-  if (!currentImg) { isShattering = false; return; }
-
-  const rect = container.getBoundingClientRect();
-  const cols = 12, rows = 8;
-  const tileW = rect.width  / cols;
-  const tileH = rect.height / rows;
-  const src = currentImg.getAttribute('src');
-
-  // la prossima slide è già pronta sotto, verrà rivelata mentre le tile spariscono
-  nextSlide.classList.add('active');
-
-  const overlay = document.createElement('div');
-  overlay.className = 'shatter-overlay';
-
-  const tiles = [];
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      const tile = document.createElement('div');
-      tile.className = 'shatter-tile';
-      const delay = (r * cols + c) * 4 + Math.random() * 140;
-      tile.style.left = (c * tileW) + 'px';
-      tile.style.top  = (r * tileH) + 'px';
-      tile.style.width  = (tileW + 1) + 'px';
-      tile.style.height = (tileH + 1) + 'px';
-      tile.style.backgroundImage = `url(${src})`;
-      tile.style.backgroundSize = `${rect.width}px ${rect.height}px`;
-      tile.style.backgroundPosition = `-${c * tileW}px -${r * tileH}px`;
-      tile.style.opacity = '1';
-      tile.style.transform = 'translate(0,0) scale(1) rotate(0deg)';
-      tile.style.transition = `opacity 0.6s ease, transform 0.6s ease`;
-      tile.style.transitionDelay = `${delay.toFixed(0)}ms`;
-      overlay.appendChild(tile);
-      tiles.push(tile);
-    }
-  }
-
-  container.appendChild(overlay);
-
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      tiles.forEach(tile => {
-        const dx  = (Math.random() - 0.5) * 70;
-        const dy  = 30 + Math.random() * 70;
-        const rot = (Math.random() - 0.5) * 100;
-        tile.style.opacity = '0';
-        tile.style.transform = `translate(${dx}px, ${dy}px) scale(0.25) rotate(${rot}deg)`;
-      });
-    });
-  });
-
-  const totalTime = (rows * cols * 4) + 140 + 600 + 150;
-  setTimeout(() => {
-    currentSlide.classList.remove('active');
-    overlay.remove();
-    slideIdx = nextIdx;
-    isShattering = false;
-  }, totalTime);
 }
 
 /* ── LIGHTBOX ── */
@@ -638,6 +568,86 @@ document.addEventListener('keydown', (e) => {
 
 /* ── STOP CLICK AFTER DRAG ── */
 function stopClick(e) { e.stopPropagation(); e.preventDefault(); }
+
+/* ── PERSISTENT MOUSE-DRIVEN SHATTER ──
+   Passando il mouse sulle foto, i pixel sotto il cursore si staccano
+   e volano via seguendo direzione/velocità del movimento, per poi
+   fermarsi e restare lì (sporcando il bianco della pagina). L'area
+   toccata resta "bucata" — l'effetto non si resetta mai da solo. */
+const mouseState = { x: 0, y: 0, vx: 0, vy: 0, t: 0 };
+window.addEventListener('mousemove', (e) => {
+  const now = performance.now();
+  const dt = Math.min(now - (mouseState.t || now), 60) || 16;
+  mouseState.vx = (e.clientX - mouseState.x) / dt * 16;
+  mouseState.vy = (e.clientY - mouseState.y) / dt * 16;
+  mouseState.x = e.clientX;
+  mouseState.y = e.clientY;
+  mouseState.t = now;
+});
+
+let debrisLayer = null;
+function ensureDebrisLayer() {
+  if (debrisLayer) return debrisLayer;
+  debrisLayer = document.createElement('div');
+  debrisLayer.id = 'debrisLayer';
+  debrisLayer.style.cssText = 'position:fixed; inset:0; pointer-events:none; z-index:500; overflow:hidden;';
+  document.body.appendChild(debrisLayer);
+  return debrisLayer;
+}
+
+function eraseCell(block, px, py, size) {
+  const mask = document.createElement('div');
+  mask.className = 'erase-mask';
+  mask.style.left   = px + 'px';
+  mask.style.top    = py + 'px';
+  mask.style.width  = size + 'px';
+  mask.style.height = size + 'px';
+  block.appendChild(mask);
+}
+
+function spawnDebris(pageX, pageY, size, containerW, containerH, src, srcX, srcY) {
+  const layer = ensureDebrisLayer();
+  const frag = document.createElement('div');
+  frag.className = 'debris-frag';
+  frag.style.left = pageX + 'px';
+  frag.style.top  = pageY + 'px';
+  frag.style.width  = size + 'px';
+  frag.style.height = size + 'px';
+  frag.style.backgroundImage = `url(${src})`;
+  frag.style.backgroundSize = `${containerW}px ${containerH}px`;
+  frag.style.backgroundPosition = `-${srcX}px -${srcY}px`;
+  layer.appendChild(frag);
+
+  let vx = (mouseState.vx || 0) * (0.5 + Math.random() * 0.6) + (Math.random() - 0.5) * 2;
+  let vy = (mouseState.vy || 0) * (0.5 + Math.random() * 0.6) + (Math.random() - 0.5) * 2;
+  let x = 0, y = 0, rot = 0;
+  const rotSpeed = (Math.random() - 0.5) * 14;
+  let frame = 0;
+  const maxFrames = 55;
+
+  function step() {
+    frame++;
+    vx *= 0.90;
+    vy *= 0.90;
+    x += vx;
+    y += vy;
+    rot += rotSpeed * (1 - frame / maxFrames);
+    frag.style.transform = `translate(${x}px, ${y}px) rotate(${rot}deg)`;
+    if (frame < maxFrames && (Math.abs(vx) > 0.05 || Math.abs(vy) > 0.05)) {
+      requestAnimationFrame(step);
+    }
+  }
+  requestAnimationFrame(step);
+}
+
+/* ── ABOUT SLIDESHOW SHATTER ──
+   Passando il mouse sulla foto attualmente visibile nell'about, i pixel
+   sotto il cursore si staccano e volano via seguendo il movimento del
+   mouse, per poi fermarsi e restare lì — l'area resta "bucata" finché
+   la slide non ricompare nel giro successivo, pulita da capo. */
+function currentAboutSlide() {
+  return document.querySelector('.about-slide.active');
+}
 
 /* ── MAKE DRAGGABLE ── */
 function makeDraggable(block) {
@@ -679,7 +689,7 @@ function placeImages(srcs, container) {
     const block = document.createElement('div');
     block.className = 'floating-img';
     block.style.cssText = 'position:absolute; overflow:hidden; opacity:0; transition:opacity 0.3s;';
-    const w = 150 + Math.floor(Math.random() * 200);
+    const w = 90 + Math.floor(Math.random() * 90);
     const tempImg = new Image();
     tempImg.onload = function () {
       const h = Math.round(w * this.naturalHeight / this.naturalWidth);
@@ -727,7 +737,7 @@ function showSeriesPreview(seriesIdx) {
     const block = document.createElement('div');
     block.className = 'preview-img floating-img';
     block.style.cssText = 'position:absolute; overflow:hidden; opacity:0; transition:opacity 0.2s; pointer-events:none;';
-    const w = 150 + Math.floor(Math.random() * 200);
+    const w = 90 + Math.floor(Math.random() * 90);
     const tempImg = new Image();
     tempImg.onload = function () {
       const h = Math.round(w * this.naturalHeight / this.naturalWidth);
@@ -774,6 +784,42 @@ function openSeries(i) {
 /* ── INIT ── */
 shuffleHomeImages();
 initSlideshow();
+
+document.getElementById('aboutSlideshow').addEventListener('mousemove', (e) => {
+  const slide = currentAboutSlide();
+  if (!slide) return;
+  const img = slide.querySelector('img');
+  if (!img) return;
+
+  const cellSize = 16;
+  const radius = 30;
+  slide._cleared = slide._cleared || new Set();
+
+  const rect = slide.getBoundingClientRect();
+  const w = rect.width, h = rect.height;
+  const cx = e.clientX - rect.left;
+  const cy = e.clientY - rect.top;
+  const cols = Math.ceil(w / cellSize);
+  const rows = Math.ceil(h / cellSize);
+  const gx0 = Math.max(0, Math.floor((cx - radius) / cellSize));
+  const gx1 = Math.min(cols - 1, Math.floor((cx + radius) / cellSize));
+  const gy0 = Math.max(0, Math.floor((cy - radius) / cellSize));
+  const gy1 = Math.min(rows - 1, Math.floor((cy + radius) / cellSize));
+  const src = img.getAttribute('src');
+
+  for (let gy = gy0; gy <= gy1; gy++) {
+    for (let gx = gx0; gx <= gx1; gx++) {
+      const key = gx + '_' + gy;
+      if (slide._cleared.has(key)) continue;
+      const px = gx * cellSize, py = gy * cellSize;
+      const ddx = (px + cellSize / 2) - cx, ddy = (py + cellSize / 2) - cy;
+      if (Math.hypot(ddx, ddy) > radius) continue;
+      slide._cleared.add(key);
+      eraseCell(slide, px, py, cellSize);
+      spawnDebris(rect.left + px, rect.top + py, cellSize, w, h, src, px, py);
+    }
+  }
+});
 
 document.querySelector('.home-images').addEventListener('click', (e) => {
   if (e.target === e.currentTarget) shuffleHomeImages();
