@@ -262,6 +262,18 @@ nav {
 .about-slide.active { opacity: 1; }
 .about-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
+.shatter-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+.shatter-tile {
+  position: absolute;
+  background-repeat: no-repeat;
+  will-change: opacity, transform;
+}
+
 .about-right {
   padding: 32px 28px;
   display: flex;
@@ -503,20 +515,93 @@ function initSlideshow() {
   slideIdx = 0;
 }
 
+let isShattering = false;
+
 function startSlideshow() {
   if (slideshowInterval) clearInterval(slideshowInterval);
-  slideshowInterval = setInterval(() => {
-    const slides = document.querySelectorAll('.about-slide');
-    if (!slides.length) return;
-    slides[slideIdx].classList.remove('active');
-    slideIdx = (slideIdx + 1) % slides.length;
-    slides[slideIdx].classList.add('active');
-  }, 1800);
+  slideshowInterval = setInterval(shatterTransition, 3200);
 }
 
 function stopSlideshow() {
   if (slideshowInterval) clearInterval(slideshowInterval);
   slideshowInterval = null;
+  const overlay = document.querySelector('.shatter-overlay');
+  if (overlay) overlay.remove();
+  isShattering = false;
+}
+
+/* ── PIXEL SHATTER TRANSITION ──
+   Copre la slide corrente con una griglia di piccole tile che si sgretolano
+   (fade + scala + piccola rotazione, con delay scaglionato) rivelando la
+   slide successiva già presente sotto. */
+function shatterTransition() {
+  if (isShattering) return;
+  const slides = document.querySelectorAll('.about-slide');
+  if (slides.length < 2) return;
+  isShattering = true;
+
+  const container   = document.getElementById('aboutSlideshow');
+  const currentSlide = slides[slideIdx];
+  const nextIdx      = (slideIdx + 1) % slides.length;
+  const nextSlide    = slides[nextIdx];
+  const currentImg   = currentSlide.querySelector('img');
+  if (!currentImg) { isShattering = false; return; }
+
+  const rect = container.getBoundingClientRect();
+  const cols = 12, rows = 8;
+  const tileW = rect.width  / cols;
+  const tileH = rect.height / rows;
+  const src = currentImg.getAttribute('src');
+
+  // la prossima slide è già pronta sotto, verrà rivelata mentre le tile spariscono
+  nextSlide.classList.add('active');
+
+  const overlay = document.createElement('div');
+  overlay.className = 'shatter-overlay';
+
+  const tiles = [];
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const tile = document.createElement('div');
+      tile.className = 'shatter-tile';
+      const delay = (r * cols + c) * 4 + Math.random() * 140;
+      tile.style.left = (c * tileW) + 'px';
+      tile.style.top  = (r * tileH) + 'px';
+      tile.style.width  = (tileW + 1) + 'px';
+      tile.style.height = (tileH + 1) + 'px';
+      tile.style.backgroundImage = `url(${src})`;
+      tile.style.backgroundSize = `${rect.width}px ${rect.height}px`;
+      tile.style.backgroundPosition = `-${c * tileW}px -${r * tileH}px`;
+      tile.style.opacity = '1';
+      tile.style.transform = 'translate(0,0) scale(1) rotate(0deg)';
+      tile.style.transition = `opacity 0.6s ease, transform 0.6s ease`;
+      tile.style.transitionDelay = `${delay.toFixed(0)}ms`;
+      overlay.appendChild(tile);
+      tiles.push(tile);
+    }
+  }
+
+  container.appendChild(overlay);
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      tiles.forEach(tile => {
+        const dx  = (Math.random() - 0.5) * 70;
+        const dy  = 30 + Math.random() * 70;
+        const rot = (Math.random() - 0.5) * 100;
+        tile.style.opacity = '0';
+        tile.style.transform = `translate(${dx}px, ${dy}px) scale(0.25) rotate(${rot}deg)`;
+      });
+    });
+  });
+
+  const totalTime = (rows * cols * 4) + 140 + 600 + 150;
+  setTimeout(() => {
+    currentSlide.classList.remove('active');
+    overlay.remove();
+    slideIdx = nextIdx;
+    isShattering = false;
+  }, totalTime);
 }
 
 /* ── LIGHTBOX ── */
