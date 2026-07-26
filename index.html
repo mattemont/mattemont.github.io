@@ -258,9 +258,19 @@ nav {
   inset: 0;
   opacity: 0;
   transition: opacity 0.8s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .about-slide.active { opacity: 1; }
-.about-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.about-slide img {
+  max-width: 62%;
+  max-height: 62%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
 
 .erase-mask {
   position: absolute;
@@ -791,14 +801,20 @@ document.getElementById('aboutSlideshow').addEventListener('mousemove', (e) => {
   const img = slide.querySelector('img');
   if (!img) return;
 
-  const cellSize = 16;
-  const radius = 30;
+  const cellSize = 5;
+  const radius = 16;
   slide._cleared = slide._cleared || new Set();
 
-  const rect = slide.getBoundingClientRect();
-  const w = rect.width, h = rect.height;
-  const cx = e.clientX - rect.left;
-  const cy = e.clientY - rect.top;
+  const slideRect = slide.getBoundingClientRect();
+  const imgRect   = img.getBoundingClientRect();
+  const offsetX = imgRect.left - slideRect.left;
+  const offsetY = imgRect.top  - slideRect.top;
+  const w = imgRect.width, h = imgRect.height;
+
+  const cx = e.clientX - imgRect.left;
+  const cy = e.clientY - imgRect.top;
+  if (cx < -radius || cy < -radius || cx > w + radius || cy > h + radius) return;
+
   const cols = Math.ceil(w / cellSize);
   const rows = Math.ceil(h / cellSize);
   const gx0 = Math.max(0, Math.floor((cx - radius) / cellSize));
@@ -815,8 +831,8 @@ document.getElementById('aboutSlideshow').addEventListener('mousemove', (e) => {
       const ddx = (px + cellSize / 2) - cx, ddy = (py + cellSize / 2) - cy;
       if (Math.hypot(ddx, ddy) > radius) continue;
       slide._cleared.add(key);
-      eraseCell(slide, px, py, cellSize);
-      spawnDebris(rect.left + px, rect.top + py, cellSize, w, h, src, px, py);
+      eraseCell(slide, offsetX + px, offsetY + py, cellSize);
+      spawnDebris(imgRect.left + px, imgRect.top + py, cellSize, w, h, src, px, py);
     }
   }
 });
