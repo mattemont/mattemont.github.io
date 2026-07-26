@@ -78,6 +78,774 @@ nav {
   letter-spacing: 0.05em; font-style: italic;
 }
 
+/* home bottom: 3 colonne — series / commissioned / publications + terminal */
+.home-bottom {
+  padding: 32px 20px 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  border-top: 1px solid var(--border);
+  gap: 0;
+}
+
+.home-col {
+  padding-right: 32px;
+  border-right: 1px solid var(--border);
+  margin-right: 0;
+}
+
+.home-col:last-of-type {
+  border-right: none;
+}
+
+.home-col p {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.home-col ul {
+  list-style: none;
+}
+
+.home-col ul li {
+  padding: 3px 0;
+}
+
+.home-col ul li a {
+  font-size: 13px;
+  font-style: italic;
+  cursor: pointer;
+  display: inline-block;
+  transition: transform 0.15s;
+}
+
+.home-col ul li a:hover { transform: translateX(4px); }
+
+.home-col ul li.placeholder {
+  font-size: 12px;
+  color: #ccc;
+  font-style: italic;
+  padding: 3px 0;
+}
+
+.home-info {
+  padding-left: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.terminal-line { font-size: 12px; color: var(--muted); }
+.cursor {
+  display: inline-block; width: 7px; height: 13px;
+  background: var(--ink); vertical-align: middle; margin-left: 1px;
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+.status-line { font-size: 11px; color: #bbb; margin-top: 24px; line-height: 2; }
+
+/* SERIES DETAIL */
+#series-detail { padding-top: 80px; }
+
+.detail-header {
+  padding: 24px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: baseline; gap: 24px;
+  position: sticky; top: 80px;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(4px);
+  z-index: 10;
+}
+.detail-back { font-size: 11px; color: var(--muted); cursor: pointer; flex-shrink: 0; }
+.detail-back:hover { color: var(--ink); }
+.detail-title { font-size: 13px; font-style: italic; font-weight: 400; }
+.detail-meta  { font-size: 11px; color: var(--muted); margin-left: auto; }
+
+/* testo descrittivo sotto l'header — più spazio, più leggibile */
+.detail-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--border);
+}
+
+.detail-intro-text {
+  padding: 24px 20px;
+  border-right: 1px solid var(--border);
+}
+
+.detail-intro-text p {
+  font-size: 12px;
+  color: #555;
+  line-height: 1.9;
+  max-width: 48ch;
+}
+
+.detail-intro-meta {
+  padding: 24px 20px;
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 2;
+}
+
+.detail-grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0;
+  padding: 40px 40px 80px;
+}
+
+.detail-grid-item {
+  overflow: hidden;
+  cursor: zoom-in;
+  margin: 8px;
+}
+
+.detail-grid-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: opacity 0.2s;
+}
+
+.detail-grid-item:hover img { opacity: 0.85; }
+
+/* LIGHTBOX */
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(255,255,255,0.97);
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+}
+.lightbox.active { display: flex; }
+.lightbox img {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  display: block;
+}
+.lightbox-close {
+  position: fixed;
+  top: 20px; right: 24px;
+  font-size: 11px; color: var(--muted); cursor: pointer;
+  font-family: var(--font); letter-spacing: 0.05em;
+}
+.lightbox-close:hover { color: var(--ink); }
+.lightbox-prev, .lightbox-next {
+  position: fixed; top: 50%; transform: translateY(-50%);
+  font-size: 11px; color: var(--muted); cursor: pointer;
+  font-family: var(--font); letter-spacing: 0.05em; padding: 20px;
+}
+.lightbox-prev { left: 16px; }
+.lightbox-next { right: 60px; }
+.lightbox-prev:hover, .lightbox-next:hover { color: var(--ink); }
+
+/* ABOUT */
+#about {
+  padding-top: 80px;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: calc(100vh - 80px);
+}
+
+.about-left {
+  border-right: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+.about-slideshow {
+  position: absolute;
+  inset: 0;
+}
+
+.about-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.about-slide.active { opacity: 1; }
+
+.about-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.about-right {
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.about-right h2 {
+  font-size: 13px; font-weight: 400; font-style: italic;
+  line-height: 1.8; margin-bottom: 20px;
+}
+
+.about-right p {
+  font-size: 12px; color: #555;
+  margin-bottom: 12px; line-height: 1.8; max-width: 42ch;
+}
+
+.about-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+.about-table tr { border-top: 1px solid var(--border); }
+.about-table td { padding: 6px 0; font-size: 11px; vertical-align: top; }
+.about-table td:first-child { color: var(--muted); width: 100px; }
+
+.contact-list { display: flex; flex-direction: column; gap: 14px; }
+.contact-block small { display: block; font-size: 11px; color: var(--muted); margin-bottom: 2px; }
+.contact-block a { font-size: 13px; font-style: italic; color: var(--ink); }
+.contact-block a:hover { text-decoration: underline; }
+
+.error-block { font-size: 11px; color: #bbb; line-height: 2; margin-top: auto; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-name" onclick="showPage('home')">Matteo Montorfano.</div>
+  <ul class="nav-links">
+    <li><a onclick="showPage('home')"  id="nav-home"  class="active">work</a></li>
+    <li><a onclick="showPage('about')" id="nav-about">about</a></li>
+  </ul>
+</nav>
+
+<!-- HOME -->
+<div id="home" class="page active fade">
+  <div class="home-images"></div>
+  <div class="home-bottom">
+
+    <!-- SERIES -->
+    <div class="home-col">
+      <p>— series</p>
+      <ul id="homeSeriesList"></ul>
+    </div>
+
+    <!-- COMMISSIONED — placeholder, stessa struttura delle series -->
+    <div class="home-col">
+      <p>— commissioned</p>
+      <ul id="homeCommissionedList">
+        <!-- aggiungi voci come le series quando pronto:
+        <li><a onclick="openCommissioned(0)">project name</a></li>
+        -->
+        <li class="placeholder">coming soon</li>
+      </ul>
+    </div>
+
+    <!-- PUBLICATIONS — placeholder -->
+    <div class="home-col">
+      <p>— publications</p>
+      <ul id="homePublicationsList">
+        <!-- aggiungi voci come le series quando pronto:
+        <li><a onclick="openPublication(0)">publication name</a></li>
+        -->
+        <li class="placeholder">coming soon</li>
+      </ul>
+    </div>
+
+    <!-- TERMINAL -->
+    <div class="home-info">
+      <div class="terminal-line">visitor@matteomontorfano.com:~$ <span class="cursor"></span></div>
+      <div class="status-line">
+        photographer — Milan<br>
+        © 2026 — all rights reserved<br>
+        <span style="color:#ddd;">————————————————</span><br>
+        open for commissions
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SERIES DETAIL -->
+<div id="series-detail" class="page">
+  <div class="detail-header">
+    <span class="detail-back" onclick="showPage('home')">← work</span>
+    <span class="detail-title" id="detail-title"></span>
+    <span class="detail-meta"  id="detail-meta"></span>
+  </div>
+
+  <!-- testo introduttivo diviso in due colonne -->
+  <div class="detail-intro">
+    <div class="detail-intro-text">
+      <p id="detail-desc"></p>
+    </div>
+    <div class="detail-intro-meta" id="detail-intro-meta"></div>
+  </div>
+
+  <div class="detail-grid" id="detail-grid"></div>
+</div>
+
+<!-- ABOUT -->
+<div id="about" class="page">
+  <div class="about-grid">
+
+    <div class="about-left">
+      <div class="about-slideshow" id="aboutSlideshow"></div>
+    </div>
+
+    <div class="about-right">
+      <div>
+        <h2>i photograph the spaces<br>between things —<br>light, silence, grain.</h2>
+        <p>based in Milan. working with natural light and analogue processes. my practice spans portraiture, urban landscape, and long-form series.</p>
+        <p>i have collaborated with independent publishers, galleries, and editorial clients across europe. prints available on request.</p>
+        <table class="about-table">
+          <tr><td>based</td>    <td>Milan, Italy</td></tr>
+          <tr><td>darkroom</td> <td>b&w and color film, RA-4 printing, alternative processes</td></tr>
+          <tr><td>available</td><td>commissions, editorial, prints</td></tr>
+        </table>
+      </div>
+      <div>
+        <div class="contact-list">
+          <div class="contact-block">
+            <small>email</small>
+            <a href="mailto:mattemont99@gmail.com">mattemont99@gmail.com</a>
+          </div>
+          <div class="contact-block">
+            <small>instagram</small>
+            <a href="https://instagram.com/this.monto" target="_blank">@this.monto</a>
+          </div>
+        </div>
+        <div class="error-block">
+          —<br>
+          open for commissions.<br>
+          visitor@matteomontorfano.com:~$ <span class="cursor"></span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <span class="lightbox-close" onclick="closeLightbox()">close ×</span>
+  <span class="lightbox-prev" onclick="lightboxStep(-1)">← prev</span>
+  <span class="lightbox-next" onclick="lightboxStep(+1)">next →</span>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script>
+const series = [
+  {
+    num: '001',
+    name: 'Ciondolarsi Continuo',
+    year: '2025 — ongoing',
+    desc: 'aggiungi qui il testo descrittivo della serie. puoi scrivere quanto vuoi, apparirà nella colonna sinistra sotto il titolo.',
+    images: [
+      'images/impulsi1.jpg','images/impulsi2.jpg','images/impulsi3.jpg',
+      'images/impulsi4.jpg','images/impulsi5.jpg','images/impulsi6.jpg',
+      'images/impulsi7.jpg','images/impulsi8.jpg','images/impulsi9.jpg',
+      'images/impulsi10.jpg','images/impulsi11.jpg','images/impulsi12.jpg',
+      'images/impulsi13.jpg','images/impulsi14.jpg','images/impulsi15.jpg',
+      'images/impulsi16.jpg','images/impulsi17.jpg','images/impulsi18.jpg',
+    ]
+  },
+  {
+    num: '002',
+    name: 'So Real',
+    year: '2023 — ongoing',
+    desc: 'aggiungi qui il testo descrittivo della serie.',
+    images: [
+      'images/soreal1.jpg','images/soreal2.jpg','images/soreal3.jpg',
+      'images/soreal4.jpg','images/soreal5.jpg','images/soreal6.jpg',
+      'images/soreal7.jpg','images/soreal8.jpg','images/soreal9.jpg',
+      'images/soreal10.jpg','images/soreal11.jpg',
+    ]
+  },
+  {
+    num: '003',
+    name: 'Wila',
+    year: '2024 — ongoing',
+    desc: 'aggiungi qui il testo descrittivo della serie.',
+    images: [
+      'images/wila1.jpg','images/wila2.jpg','images/wila3.jpg',
+      'images/wila4.jpg','images/wila5.jpg','images/wila6.jpg',
+      'images/wila7.jpg','images/wila8.jpg','images/wila9.jpg',
+      'images/wila10.jpg','images/wila11.jpg','images/wila12.jpg',
+      'images/wila13.jpg','images/wila14.jpg','images/wila15.jpg',
+      'images/wila16.jpg','images/wila17.jpg','images/wila18.jpg',
+      'images/wila19.jpg','images/wila20.jpg','images/wila21.jpg',
+      'images/wila22.jpg','images/wila23.jpg','images/wila24.jpg',
+      'images/wila25.jpg','images/wila26.jpg','images/wila27.jpg',
+    ]
+  },
+];
+
+/*
+  ── COMMISSIONED — stessa struttura di series, aggiungi quando pronto ──
+  const commissioned = [
+    {
+      num: '001',
+      name: 'project name',
+      year: '2025',
+      desc: 'descrizione del lavoro commissionato.',
+      images: ['images/comm1.jpg', ...]
+    },
+  ];
+
+  ── PUBLICATIONS — stessa struttura ──
+  const publications = [
+    {
+      num: '001',
+      name: 'publication name',
+      year: '2024',
+      desc: 'descrizione della pubblicazione.',
+      images: ['images/pub1.jpg', ...]
+    },
+  ];
+*/
+
+/* ── FISHER-YATES SHUFFLE ── */
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* ── ABOUT SLIDESHOW ── */
+let slideshowInterval = null;
+let slideIdx = 0;
+
+function initSlideshow() {
+  const container = document.getElementById('aboutSlideshow');
+  container.innerHTML = '';
+  const allSrcs = shuffle(series.flatMap(s => s.images));
+  allSrcs.forEach((src, i) => {
+    const slide = document.createElement('div');
+    slide.className = 'about-slide' + (i === 0 ? ' active' : '');
+    slide.innerHTML = `<img src="${src}" alt="" loading="lazy">`;
+    container.appendChild(slide);
+  });
+  slideIdx = 0;
+}
+
+function startSlideshow() {
+  if (slideshowInterval) clearInterval(slideshowInterval);
+  slideshowInterval = setInterval(() => {
+    const slides = document.querySelectorAll('.about-slide');
+    if (!slides.length) return;
+    slides[slideIdx].classList.remove('active');
+    slideIdx = (slideIdx + 1) % slides.length;
+    slides[slideIdx].classList.add('active');
+  }, 1800);
+}
+
+function stopSlideshow() {
+  if (slideshowInterval) clearInterval(slideshowInterval);
+  slideshowInterval = null;
+}
+
+/* ── LIGHTBOX ── */
+let lightboxSrcs = [];
+let lightboxIdx  = 0;
+
+function openLightbox(srcs, idx) {
+  lightboxSrcs = srcs;
+  lightboxIdx  = idx;
+  document.getElementById('lightbox-img').src = srcs[idx];
+  document.getElementById('lightbox').classList.add('active');
+}
+
+function lightboxStep(dir) {
+  lightboxIdx = (lightboxIdx + dir + lightboxSrcs.length) % lightboxSrcs.length;
+  document.getElementById('lightbox-img').src = lightboxSrcs[lightboxIdx];
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+  document.getElementById('lightbox-img').src = '';
+}
+
+document.getElementById('lightbox').addEventListener('click', (e) => {
+  if (e.target.tagName !== 'IMG' && e.target.tagName !== 'SPAN') closeLightbox();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (!document.getElementById('lightbox').classList.contains('active')) return;
+  if (e.key === 'Escape')     closeLightbox();
+  if (e.key === 'ArrowRight') lightboxStep(+1);
+  if (e.key === 'ArrowLeft')  lightboxStep(-1);
+});
+
+/* ── STOP CLICK AFTER DRAG ── */
+function stopClick(e) { e.stopPropagation(); e.preventDefault(); }
+
+/* ── MAKE DRAGGABLE ── */
+function makeDraggable(block) {
+  let startX, startY, startLeft, startTop, didDrag;
+  block.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    didDrag   = false;
+    startX    = e.clientX;
+    startY    = e.clientY;
+    startLeft = parseInt(block.style.left) || 0;
+    startTop  = parseInt(block.style.top)  || 0;
+    block.style.zIndex = 10;
+    block.style.cursor = 'grabbing';
+    function onMove(e) {
+      didDrag = true;
+      block.style.left = (startLeft + e.clientX - startX) + 'px';
+      block.style.top  = (startTop  + e.clientY - startY) + 'px';
+    }
+    function onUp() {
+      block.style.cursor = 'grab';
+      block.style.zIndex = '';
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+      if (didDrag) document.addEventListener('click', stopClick, { capture: true, once: true });
+    }
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  });
+  block.style.cursor = 'grab';
+}
+
+/* ── PLACE IMAGES IN HOME ── */
+function placeImages(srcs, container) {
+  const W = container.offsetWidth;
+  const H = container.offsetHeight;
+  const positions = [];
+  srcs.forEach((src, idx) => {
+    const block = document.createElement('div');
+    block.className = 'floating-img';
+    block.style.cssText = 'position:absolute; overflow:hidden; opacity:0; transition:opacity 0.3s;';
+    const w = 150 + Math.floor(Math.random() * 200);
+    const tempImg = new Image();
+    tempImg.onload = function () {
+      const h = Math.round(w * this.naturalHeight / this.naturalWidth);
+      block.style.width  = w + 'px';
+      block.style.height = h + 'px';
+      let bestX = 20, bestY = 20, bestScore = -1;
+      for (let t = 0; t < 10; t++) {
+        const x = 20 + Math.floor(Math.random() * Math.max(1, W - w - 40));
+        const y = 20 + Math.floor(Math.random() * Math.max(1, H - h - 40));
+        let score = 0;
+        positions.forEach(p => {
+          const dx = x - p.x, dy = y - p.y;
+          score += Math.sqrt(dx*dx + dy*dy);
+        });
+        if (score > bestScore) { bestScore = score; bestX = x; bestY = y; }
+      }
+      positions.push({ x: bestX, y: bestY });
+      block.style.left = bestX + 'px';
+      block.style.top  = bestY + 'px';
+      block.innerHTML = `<img src="${src}" alt=""
+        style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;">`;
+      container.appendChild(block);
+      makeDraggable(block);
+      setTimeout(() => { block.style.opacity = '1'; }, idx * 50);
+    };
+    tempImg.onerror = () => {};
+    tempImg.src = src;
+  });
+}
+
+/* ── HOME SHUFFLE ── */
+function shuffleHomeImages() {
+  const area = document.querySelector('.home-images');
+  area.querySelectorAll('.floating-img, .preview-img').forEach(el => el.remove());
+  placeImages(shuffle(series.flatMap(s => s.images)).slice(0, 5), area);
+}
+
+/* ── HOME SERIES HOVER PREVIEW ── */
+function showSeriesPreview(seriesIdx) {
+  const area = document.querySelector('.home-images');
+  area.querySelectorAll('.preview-img').forEach(el => el.remove());
+  const srcs = shuffle(series[seriesIdx].images).slice(0, 5);
+  const W = area.offsetWidth, H = area.offsetHeight;
+  srcs.forEach((src, idx) => {
+    const block = document.createElement('div');
+    block.className = 'preview-img floating-img';
+    block.style.cssText = 'position:absolute; overflow:hidden; opacity:0; transition:opacity 0.2s; pointer-events:none;';
+    const w = 150 + Math.floor(Math.random() * 200);
+    const tempImg = new Image();
+    tempImg.onload = function () {
+      const h = Math.round(w * this.naturalHeight / this.naturalWidth);
+      block.style.width  = w + 'px';
+      block.style.height = h + 'px';
+      block.style.left = (20 + Math.floor(Math.random() * Math.max(1, W - w - 40))) + 'px';
+      block.style.top  = (10 + Math.floor(Math.random() * Math.max(1, H - h - 40))) + 'px';
+      block.innerHTML = `<img src="${src}" alt=""
+        style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;">`;
+      area.appendChild(block);
+      setTimeout(() => { block.style.opacity = '1'; }, idx * 60);
+    };
+    tempImg.src = src;
+  });
+}
+
+/* ── SERIES DETAIL ── */
+function openSeries(i) {
+  const s    = series[i];
+  const grid = document.getElementById('detail-grid');
+
+  document.getElementById('detail-title').textContent = s.name;
+  document.getElementById('detail-meta').textContent  = s.year;
+  document.getElementById('detail-desc').textContent  = s.desc;
+
+  // meta colonna destra
+  document.getElementById('detail-intro-meta').innerHTML =
+    `<span style="color:var(--muted)">${s.num}</span><br>${s.year}<br><br>${s.images.length} images`;
+
+  grid.innerHTML = '';
+  const srcs  = shuffle(s.images);
+  const sizes = ['180px', '240px', '320px'];
+  srcs.forEach((src, idx) => {
+    const item = document.createElement('div');
+    item.className = 'detail-grid-item';
+    item.style.width = sizes[Math.floor(Math.random() * sizes.length)];
+    item.innerHTML = `<img src="${src}" alt="" loading="lazy">`;
+    item.addEventListener('click', () => openLightbox(srcs, idx));
+    grid.appendChild(item);
+  });
+
+  showPage('series-detail');
+}
+
+/* ── INIT ── */
+shuffleHomeImages();
+initSlideshow();
+
+document.querySelector('.home-images').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) shuffleHomeImages();
+});
+
+/* ── HOME SERIES LIST ── */
+const homeList    = document.getElementById('homeSeriesList');
+const defaultImgs = () => document.querySelectorAll('.home-images .floating-img:not(.preview-img)');
+
+series.forEach((s, i) => {
+  const li = document.createElement('li');
+  const a  = document.createElement('a');
+  a.textContent = s.name;
+  a.addEventListener('mouseenter', () => {
+    defaultImgs().forEach(el => el.style.opacity = '0');
+    showSeriesPreview(i);
+  });
+  a.addEventListener('mouseleave', () => {
+    document.querySelectorAll('.home-images .preview-img').forEach(el => el.remove());
+    defaultImgs().forEach(el => el.style.opacity = '1');
+  });
+  a.addEventListener('click', () => openSeries(i));
+  li.appendChild(a);
+  homeList.appendChild(li);
+});
+
+/* ── PAGE SWITCHER ── */
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  const pg = document.getElementById(name);
+  if (pg) pg.classList.add('active', 'fade');
+  const navMap = { home: 'nav-home', 'series-detail': 'nav-home', about: 'nav-about' };
+  const navEl = document.getElementById(navMap[name]);
+  if (navEl) navEl.classList.add('active');
+  window.scrollTo(0, 0);
+  if (name === 'about') startSlideshow();
+  else stopSlideshow();
+}
+</script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matteo Montorfano — Photography</title>
+<meta name="description" content="Matteo Montorfano — photographer based in Milan">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #ffffff;
+  --ink: #111111;
+  --muted: #888888;
+  --border: #e8e8e8;
+  --font: 'Courier Prime', Courier, monospace;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+a { color: var(--ink); text-decoration: none; }
+a:hover { text-decoration: underline; cursor: pointer; }
+
+.page { display: none; }
+.page.active { display: block; }
+.fade { animation: fadeIn 0.3s ease both; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(4px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-name { font-size: 13px; font-style: italic; cursor: pointer; }
+.nav-links { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; list-style: none; }
+.nav-links a { font-size: 12px; color: var(--muted); cursor: pointer; }
+.nav-links a.active, .nav-links a:hover { color: var(--ink); }
+
+/* HOME */
+#home { padding-top: 80px; min-height: 100vh; }
+
+.home-images {
+  position: relative;
+  width: 100%;
+  height: 520px;
+  overflow: hidden;
+  cursor: default;
+}
+
+.floating-img {
+  position: absolute;
+  overflow: hidden;
+  transition: opacity 0.25s;
+  cursor: grab;
+}
+
+.ph {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: #bbb;
+  letter-spacing: 0.05em; font-style: italic;
+}
+
 .home-bottom {
   padding: 32px 20px 24px;
   display: grid;
