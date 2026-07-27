@@ -176,27 +176,31 @@ nav {
 }
 
 .detail-grid {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 0;
-  padding: 40px 40px 80px;
+  position: relative;
+  padding: 40px;
+  margin-top: -70px;
 }
 
 .detail-grid-item {
-  overflow: hidden;
-  cursor: zoom-in;
-  margin: 8px;
+  position: absolute;
+  box-sizing: border-box;
+  background: #fff;
+  padding: 10px 10px 32px;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.14), 0 2px 6px rgba(0,0,0,0.10);
+  cursor: grab;
+  user-select: none;
+  transition: box-shadow 0.15s ease;
 }
+
+.detail-grid-item:hover { box-shadow: 0 16px 34px rgba(0,0,0,0.20), 0 3px 8px rgba(0,0,0,0.12); }
+.detail-grid-item:active { cursor: grabbing; }
 
 .detail-grid-item img {
   width: 100%;
   height: auto;
   display: block;
-  transition: opacity 0.2s;
+  pointer-events: none;
 }
-
-.detail-grid-item:hover img { opacity: 0.85; }
 
 /* LIGHTBOX */
 .lightbox {
@@ -682,15 +686,47 @@ function openSeries(i) {
     `<span style="color:var(--muted)">${s.num}</span><br>${s.year}<br><br>${s.images.length} images`;
 
   grid.innerHTML = '';
-  const srcs  = shuffle(s.images);
-  const sizes = ['180px', '240px', '320px'];
+  const srcs = shuffle(s.images);
+
+  // altezza generosa della "scrivania" in base al numero di foto
+  const perRow = 4;
+  const rowCount = Math.ceil(srcs.length / perRow);
+  const containerW = window.innerWidth - 80;
+  const containerH = rowCount * 260 + 260;
+  grid.style.height = containerH + 'px';
+
+  const positions = [];
+
   srcs.forEach((src, idx) => {
     const item = document.createElement('div');
     item.className = 'detail-grid-item';
-    item.style.width = sizes[Math.floor(Math.random() * sizes.length)];
-    item.innerHTML = `<img src="${src}" alt="" loading="lazy">`;
-    item.addEventListener('click', () => openLightbox(srcs, idx));
-    grid.appendChild(item);
+    const w = 150 + Math.floor(Math.random() * 130);   // 150–280px
+    item.style.width = w + 'px';
+
+    const tempImg = new Image();
+    tempImg.onload = function () {
+      const h = Math.round((w - 20) * this.naturalHeight / this.naturalWidth) + 42; // + bordo polaroid
+
+      let bestX = 20, bestY = 20, bestScore = -1;
+      for (let t = 0; t < 12; t++) {
+        const x = Math.floor(Math.random() * Math.max(1, containerW - w - 20));
+        const y = Math.floor(Math.random() * Math.max(1, containerH - h - 20));
+        let score = 0;
+        positions.forEach(p => {
+          const dx = x - p.x, dy = y - p.y;
+          score += Math.sqrt(dx * dx + dy * dy);
+        });
+        if (score > bestScore) { bestScore = score; bestX = x; bestY = y; }
+      }
+      positions.push({ x: bestX, y: bestY });
+      item.style.left = bestX + 'px';
+      item.style.top  = bestY + 'px';
+      item.innerHTML = `<img src="${src}" alt="" loading="lazy">`;
+      grid.appendChild(item);
+      makeDraggable(item);
+      item.addEventListener('click', () => openLightbox(srcs, idx));
+    };
+    tempImg.src = src;
   });
 
   showPage('series-detail');
