@@ -152,6 +152,15 @@ nav {
 .detail-back:hover { color: var(--ink); }
 .detail-title { font-size: 13px; font-style: italic; font-weight: 400; }
 .detail-meta  { font-size: 11px; color: var(--muted); margin-left: auto; }
+.detail-hint  { font-size: 11px; color: var(--muted); font-style: italic; margin-left: 24px; }
+
+/* etichetta che segue il cursore sopra le foto */
+.expand-tip {
+  position: fixed; z-index: 500; pointer-events: none;
+  font-size: 11px; font-style: italic; color: var(--ink);
+  background: var(--bg); border: 1px solid var(--border);
+  padding: 2px 8px; display: none;
+}
 
 .detail-grid {
   position: relative;
@@ -357,11 +366,14 @@ nav {
   </div>
 </div>
 
+<div class="expand-tip" id="expandTip">click to expand</div>
+
 <!-- SERIES DETAIL -->
 <div id="series-detail" class="page">
   <div class="detail-header">
     <span class="detail-back" onclick="showPage('home')">← work</span>
     <span class="detail-title" id="detail-title"></span>
+    <span class="detail-hint">click a photo to expand</span>
     <span class="detail-meta"  id="detail-meta"></span>
   </div>
 
@@ -631,7 +643,7 @@ function placeImages(srcs, container) {
 function shuffleHomeImages() {
   const area = document.querySelector('.home-images');
   area.querySelectorAll('.floating-img, .preview-img').forEach(el => el.remove());
-  placeImages(shuffle(series.flatMap(s => s.images)).slice(0, 5), area);
+  placeImages(shuffle(series.flatMap(s => s.images)).slice(0, 10), area);
 }
 
 /* ── HOME SERIES HOVER PREVIEW ── */
@@ -683,7 +695,7 @@ function openSeries(i) {
   // area di sparpagliamento: più compatta e centrata
   const n          = srcs.length;
   const areaW      = Math.min(window.innerWidth - 80, 1100);
-  const areaH      = Math.max(560, Math.round(n * 55000 / areaW * 1.0) + 160);
+  const areaH      = Math.max(560, Math.round(n * 80000 / areaW * 1.0) + 160);
   grid.style.width     = areaW + 'px';
   grid.style.height    = areaH + 'px';
   grid.style.margin    = '0 auto';
@@ -716,7 +728,7 @@ function openSeries(i) {
   srcs.forEach((src, idx) => {
     const item = document.createElement('div');
     item.className = 'detail-grid-item';
-    const w = 150 + Math.floor(Math.random() * 130);   // 150–280px
+    const w = 200 + Math.floor(Math.random() * 120);   // 200–320px
     item.style.width = w + 'px';
 
     const tempImg = new Image();
@@ -748,6 +760,14 @@ function openSeries(i) {
       grid.appendChild(item);
       makeDraggable(item);
       item.addEventListener('click', () => openLightbox(srcs, idx));
+      const tip = document.getElementById('expandTip');
+      item.addEventListener('mouseenter', () => { tip.style.display = 'block'; });
+      item.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
+      item.addEventListener('mousemove', (e) => {
+        tip.style.left = (e.clientX + 14) + 'px';
+        tip.style.top  = (e.clientY + 14) + 'px';
+      });
+      item.addEventListener('mousedown', () => { tip.style.display = 'none'; });
     };
     tempImg.src = src;
   });
