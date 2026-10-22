@@ -1,20 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
+
+<!--
+════════════════════════════════════════════════════════════════════
+  GUIDA RAPIDA — come è fatto questo file
+════════════════════════════════════════════════════════════════════
+  Il file ha 3 grandi parti, sempre nello stesso ordine:
+
+  1) blocco STYLE      →  L'ASPETTO   (colori, dimensioni, posizioni)
+  2) blocco BODY       →  LA STRUTTURA (le pagine: home, progetto, about)
+  3) blocco SCRIPT     →  IL COMPORTAMENTO (animazioni, click, trascinamento)
+
+  Ogni parte è divisa in SEZIONI, riconoscibili da questi riquadri:
+      ╔═══════════════════════════╗
+      ║  NOME DELLA SEZIONE       ║
+      ╚═══════════════════════════╝
+
+  Cosa modificare più spesso (cerca queste scritte con Ctrl+F / Cmd+F):
+    • "IMPOSTAZIONI"  → numero di foto, dimensioni, velocità slideshow
+    • "DATI: SERIE"   → nomi delle serie, anni, testi, elenco delle foto
+    • "about-right"   → testi della pagina About e contatti
+════════════════════════════════════════════════════════════════════
+-->
+
 <head>
 <meta charset="UTF-8">
+<!-- fa adattare il sito allo schermo del telefono -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Matteo Montorfano — Photography</title>
 <meta name="description" content="Matteo Montorfano — photographer based in Milan">
+
+
+<!--
+╔══════════════════════════════════════════════════════════════════╗
+║  PARTE 1 — STILE (CSS): l'aspetto del sito                       ║
+╚══════════════════════════════════════════════════════════════════╝
+-->
 <style>
+
+/* ╔══════════════════════════════════════╗
+   ║  FONT                                ║
+   ╚══════════════════════════════════════╝ */
+/* carica il font Courier Prime da Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap');
 
+
+/* ╔══════════════════════════════════════╗
+   ║  BASE E COLORI                       ║
+   ╚══════════════════════════════════════╝ */
+
+/* azzera i margini di default del browser; box-sizing fa sì che
+   padding e bordi siano inclusi nelle larghezze (più prevedibile) */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* i colori e il font del sito: cambiali QUI e cambiano ovunque */
 :root {
-  --bg: #ffffff;
-  --ink: #111111;
-  --muted: #888888;
-  --border: #e8e8e8;
+  --bg: #ffffff;        /* sfondo */
+  --ink: #111111;       /* colore del testo */
+  --muted: #888888;     /* grigio per testi secondari */
+  --border: #e8e8e8;    /* grigio chiarissimo per le linee sottili */
   --font: 'Courier Prime', Courier, monospace;
 }
 
@@ -23,54 +67,72 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-size: 13px;
-  line-height: 1.5;
-  overflow-x: hidden;
+  line-height: 1.5;          /* altezza di riga */
+  overflow-x: hidden;        /* niente scroll orizzontale */
 }
 
 a { color: var(--ink); text-decoration: none; }
 a:hover { text-decoration: underline; cursor: pointer; }
 
-.page { display: none; }
-.page.active { display: block; }
+
+/* ╔══════════════════════════════════════╗
+   ║  PAGINE (mostra una, nasconde le altre) ║
+   ╚══════════════════════════════════════╝ */
+
+.page { display: none; }            /* tutte le pagine nascoste di default */
+.page.active { display: block; }    /* quella con classe "active" si vede */
+
+/* dissolvenza quando si cambia pagina */
 .fade { animation: fadeIn 0.3s ease both; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-/* NAV */
+
+/* ╔══════════════════════════════════════╗
+   ║  MENU IN ALTO (nav)                  ║
+   ╚══════════════════════════════════════╝ */
+
 nav {
-  position: fixed;
+  position: fixed;                       /* resta fisso in alto anche scrollando */
   top: 0; left: 0; right: 0;
-  z-index: 100;
+  z-index: 100;                          /* sta sopra a tutto il resto */
   padding: 14px 20px;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between;        /* nome a sinistra, link a destra */
   align-items: flex-start;
-  background: rgba(255,255,255,0.92);
+  background: rgba(255,255,255,0.92);    /* bianco leggermente trasparente */
   backdrop-filter: blur(4px);
   border-bottom: 1px solid var(--border);
 }
-.nav-name { font-size: 13px; font-style: italic; cursor: pointer; }
+.nav-name  { font-size: 13px; font-style: italic; cursor: pointer; }
 .nav-links { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; list-style: none; }
 .nav-links a { font-size: 12px; color: var(--muted); cursor: pointer; }
-.nav-links a.active, .nav-links a:hover { color: var(--ink); }
+.nav-links a.active, .nav-links a:hover { color: var(--ink); }   /* voce attuale = nera */
 
-/* HOME */
-#home { padding-top: 80px; min-height: 100vh; }
 
+/* ╔══════════════════════════════════════╗
+   ║  HOME — zona foto in alto            ║
+   ╚══════════════════════════════════════╝ */
+
+#home { padding-top: 80px; min-height: 100vh; }   /* 80px = spazio per il menu fisso */
+
+/* la "scrivania" dove compaiono le foto casuali */
 .home-images {
-  position: relative;
+  position: relative;      /* le foto dentro si posizionano rispetto a questa area */
   width: 100%;
-  height: 520px;
-  overflow: hidden;
+  height: 520px;           /* ← ALTEZZA dell'area foto della home */
+  overflow: hidden;        /* nasconde ciò che esce dall'area */
   cursor: default;
 }
 
+/* ogni singola foto della home (trascinabile) */
 .floating-img {
   position: absolute;
   overflow: hidden;
   transition: opacity 0.25s;
-  cursor: grab;
+  cursor: grab;            /* manina aperta */
 }
 
+/* segnaposto grigio (non più usato, lo lascio per sicurezza) */
 .ph {
   width: 100%; height: 100%;
   display: flex; align-items: center; justify-content: center;
@@ -78,31 +140,33 @@ nav {
   letter-spacing: 0.05em; font-style: italic;
 }
 
-/* home bottom: 3 colonne — series / commissioned / publications + colonna terminale */
+
+/* ╔══════════════════════════════════════╗
+   ║  HOME — fascia in basso (colonne)    ║
+   ╚══════════════════════════════════════╝ */
+
+/* contenitore: series | commissioned | publications | terminale, in fila */
 .home-bottom {
   padding: 32px 20px 24px;
   display: flex;
-  flex-direction: row;
+  flex-direction: row;     /* una colonna accanto all'altra */
   align-items: flex-start;
   border-top: 1px solid var(--border);
 }
 
+/* ogni colonna di elenco */
 .home-col {
-  flex: 1;
+  flex: 1;                 /* tutte della stessa larghezza */
   padding-right: 32px;
   padding-left: 24px;
-  border-right: 1px solid var(--border);
+  border-right: 1px solid var(--border);   /* linea sottile a destra */
 }
 
-.home-col p {
-  font-size: 11px;
-  color: var(--muted);
-  margin-bottom: 10px;
-}
-
+.home-col p  { font-size: 11px; color: var(--muted); margin-bottom: 10px; }  /* titolo colonna */
 .home-col ul { list-style: none; }
 .home-col ul li { padding: 3px 0; }
 
+/* i link dei titoli delle serie */
 .home-col ul li a {
   font-size: 13px;
   font-style: italic;
@@ -110,8 +174,9 @@ nav {
   display: inline-block;
   transition: transform 0.15s;
 }
-.home-col ul li a:hover { transform: translateX(4px); }
+.home-col ul li a:hover { transform: translateX(4px); }   /* si sposta a destra al passaggio */
 
+/* "coming soon" in grigio chiaro */
 .home-col ul li.placeholder {
   font-size: 12px;
   color: #ccc;
@@ -119,6 +184,7 @@ nav {
   padding: 3px 0;
 }
 
+/* colonna terminale (ultima a destra) */
 .home-info {
   flex: 1;
   padding-left: 32px;
@@ -127,60 +193,68 @@ nav {
   justify-content: space-between;
 }
 
+/* effetto terminale con cursore lampeggiante */
 .terminal-line { font-size: 12px; color: var(--muted); }
 .cursor {
   display: inline-block; width: 7px; height: 13px;
   background: var(--ink); vertical-align: middle; margin-left: 1px;
-  animation: blink 1s step-end infinite;
+  animation: blink 1s step-end infinite;      /* lampeggia ogni secondo */
 }
 @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
 .status-line { font-size: 11px; color: #bbb; margin-top: 24px; line-height: 2; }
 
-/* SERIES DETAIL */
+
+/* ╔══════════════════════════════════════╗
+   ║  PAGINA PROGETTO (series detail)     ║
+   ╚══════════════════════════════════════╝ */
+
 #series-detail { padding-top: 80px; }
 
+/* barra in alto: ← work | titolo | hint | anno */
 .detail-header {
   padding: 24px 20px;
   border-bottom: 1px solid var(--border);
   display: flex; align-items: baseline; gap: 24px;
-  position: sticky; top: 80px;
+  position: sticky; top: 80px;           /* resta attaccata sotto il menu */
   background: rgba(255,255,255,0.95);
   backdrop-filter: blur(4px);
   z-index: 10;
 }
-.detail-back { font-size: 11px; color: var(--muted); cursor: pointer; flex-shrink: 0; }
+.detail-back  { font-size: 11px; color: var(--muted); cursor: pointer; flex-shrink: 0; }
 .detail-back:hover { color: var(--ink); }
 .detail-title { font-size: 13px; font-style: italic; font-weight: 400; }
-.detail-meta  { font-size: 11px; color: var(--muted); margin-left: auto; }
+.detail-meta  { font-size: 11px; color: var(--muted); margin-left: auto; }   /* anno a destra */
 .detail-hint  { font-size: 11px; color: var(--muted); font-style: italic; margin-left: 24px; }
 
-/* etichetta che segue il cursore sopra le foto */
+/* etichetta "click to expand" che segue il cursore sopra le foto */
 .expand-tip {
   position: fixed; z-index: 500; pointer-events: none;
   font-size: 11px; font-style: italic; color: var(--ink);
   background: var(--bg); border: 1px solid var(--border);
-  padding: 2px 8px; display: none;
+  padding: 2px 8px; display: none;       /* nascosta finché non serve */
 }
 
+/* la "scrivania" del progetto: le foto si sparpagliano qui dentro */
 .detail-grid {
   position: relative;
   padding: 40px;
 }
 
+/* ogni foto del progetto */
 .detail-grid-item {
   position: absolute;
   cursor: grab;
-  user-select: none;
+  user-select: none;                      /* impedisce di selezionare la foto trascinando */
 }
 .detail-grid-item:active { cursor: grabbing; }
-
 .detail-grid-item img {
   width: 100%;
-  height: auto;
+  height: auto;                           /* mantiene le proporzioni originali */
   display: block;
   pointer-events: none;
 }
 
+/* il foglietto con il testo del progetto */
 .detail-note {
   position: absolute;
   box-sizing: border-box;
@@ -204,20 +278,24 @@ nav {
   pointer-events: none;
 }
 
-/* LIGHTBOX */
+
+/* ╔══════════════════════════════════════╗
+   ║  LIGHTBOX (foto ingrandita)          ║
+   ╚══════════════════════════════════════╝ */
+
 .lightbox {
-  display: none;
+  display: none;                          /* nascosta di default */
   position: fixed;
-  inset: 0;
-  z-index: 1000;
+  inset: 0;                               /* occupa tutto lo schermo */
+  z-index: 1000;                          /* sopra a tutto */
   background: rgba(255,255,255,0.97);
   align-items: center;
   justify-content: center;
   cursor: zoom-out;
 }
-.lightbox.active { display: flex; }
+.lightbox.active { display: flex; }       /* si accende aggiungendo "active" */
 .lightbox img {
-  max-width: 90vw;
+  max-width: 90vw;                        /* mai più larga del 90% dello schermo */
   max-height: 90vh;
   object-fit: contain;
   display: block;
@@ -238,32 +316,39 @@ nav {
 .lightbox-next { right: 60px; }
 .lightbox-prev:hover, .lightbox-next:hover { color: var(--ink); }
 
-/* ABOUT */
+
+/* ╔══════════════════════════════════════╗
+   ║  PAGINA ABOUT                        ║
+   ╚══════════════════════════════════════╝ */
+
+/* pagina a schermo intero, senza scroll */
 #about {
   padding-top: 80px;
   height: 100vh;
   overflow: hidden;
 }
 
+/* due colonne: foto a sinistra, testo a destra */
 .about-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   height: calc(100vh - 80px);
 }
 
+/* colonna sinistra: slideshow */
 .about-left {
   border-right: 1px solid var(--border);
   position: relative;
   overflow: hidden;
 }
-
 .about-slideshow { position: absolute; inset: 0; }
 
+/* ogni foto dello slideshow: tutte sovrapposte, ne vede una sola (la "active") */
 .about-slide {
   position: absolute;
   inset: 0;
   opacity: 0;
-  transition: opacity 0.8s ease;
+  transition: opacity 0.8s ease;          /* dissolvenza tra una foto e l'altra */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -278,6 +363,7 @@ nav {
   display: block;
 }
 
+/* colonna destra: testi */
 .about-right {
   padding: 32px 28px;
   display: flex;
@@ -285,33 +371,45 @@ nav {
   justify-content: space-between;
   overflow: hidden;
 }
-
 .about-right h2 {
   font-size: 13px; font-weight: 400; font-style: italic;
   line-height: 1.8; margin-bottom: 20px;
 }
-
 .about-right p {
   font-size: 12px; color: #555;
   margin-bottom: 12px; line-height: 1.8; max-width: 42ch;
 }
 
+/* tabellina "based / darkroom / available" */
 .about-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
 .about-table tr { border-top: 1px solid var(--border); }
 .about-table td { padding: 6px 0; font-size: 11px; vertical-align: top; }
 .about-table td:first-child { color: var(--muted); width: 100px; }
 
+/* email e social */
 .contact-list { display: flex; flex-direction: column; gap: 14px; }
 .contact-block small { display: block; font-size: 11px; color: var(--muted); margin-bottom: 2px; }
 .contact-block a { font-size: 13px; font-style: italic; color: var(--ink); }
 .contact-block a:hover { text-decoration: underline; }
 
 .error-block { font-size: 11px; color: #bbb; line-height: 2; margin-top: auto; }
+
 </style>
 </head>
+
+
+<!--
+╔══════════════════════════════════════════════════════════════════╗
+║  PARTE 2 — STRUTTURA (HTML): cosa c'è nelle pagine               ║
+╚══════════════════════════════════════════════════════════════════╝
+-->
 <body>
 
+<!-- ╔════════════════════╗
+     ║  MENU IN ALTO      ║
+     ╚════════════════════╝ -->
 <nav>
+  <!-- cliccando il nome si torna alla home -->
   <div class="nav-name" onclick="showPage('home')">Matteo Montorfano.</div>
   <ul class="nav-links">
     <li><a onclick="showPage('home')"  id="nav-home"  class="active">work</a></li>
@@ -319,40 +417,47 @@ nav {
   </ul>
 </nav>
 
-<!-- HOME -->
+
+<!-- ╔════════════════════╗
+     ║  PAGINA: HOME      ║
+     ╚════════════════════╝ -->
 <div id="home" class="page active fade">
+
+  <!-- zona foto casuali (le foto le inserisce lo script, non scrivere nulla qui) -->
   <div class="home-images"></div>
+
+  <!-- fascia in basso con le colonne -->
   <div class="home-bottom">
 
-    <!-- SERIES -->
+    <!-- colonna 1: SERIES (l'elenco lo crea lo script dai dati in alto) -->
     <div class="home-col">
       <p>— series</p>
       <ul id="homeSeriesList"></ul>
     </div>
 
-    <!-- COMMISSIONED -->
+    <!-- colonna 2: COMMISSIONED (per ora segnaposto) -->
     <div class="home-col">
       <p>— commissioned</p>
       <ul id="homeCommissionedList">
-        <!-- aggiungi voci come le series quando pronto:
+        <!-- quando avrai i lavori, sostituisci "coming soon" con voci così:
         <li><a onclick="openCommissioned(0)">project name</a></li>
         -->
         <li class="placeholder">coming soon</li>
       </ul>
     </div>
 
-    <!-- PUBLICATIONS -->
+    <!-- colonna 3: PUBLICATIONS (per ora segnaposto) -->
     <div class="home-col">
       <p>— publications</p>
       <ul id="homePublicationsList">
-        <!-- aggiungi voci come le series quando pronto:
+        <!-- come sopra:
         <li><a onclick="openPublication(0)">publication name</a></li>
         -->
         <li class="placeholder">coming soon</li>
       </ul>
     </div>
 
-    <!-- TERMINAL / INFO -->
+    <!-- colonna 4: terminale con cursore lampeggiante -->
     <div class="home-info">
       <div class="terminal-line">visitor@matteomontorfano.com:~$ <span class="cursor"></span></div>
       <div class="status-line">
@@ -366,10 +471,17 @@ nav {
   </div>
 </div>
 
+
+<!-- etichetta "click to expand" che segue il mouse (gestita dallo script) -->
 <div class="expand-tip" id="expandTip">click to expand</div>
 
-<!-- SERIES DETAIL -->
+
+<!-- ╔════════════════════╗
+     ║  PAGINA: PROGETTO  ║
+     ╚════════════════════╝ -->
 <div id="series-detail" class="page">
+
+  <!-- barra in alto: indietro, titolo, scritta di aiuto, anno -->
   <div class="detail-header">
     <span class="detail-back" onclick="showPage('home')">← work</span>
     <span class="detail-title" id="detail-title"></span>
@@ -377,28 +489,40 @@ nav {
     <span class="detail-meta"  id="detail-meta"></span>
   </div>
 
+  <!-- scrivania: foglietto + foto vengono inseriti dallo script -->
   <div class="detail-grid" id="detail-grid"></div>
 </div>
 
-<!-- ABOUT -->
+
+<!-- ╔════════════════════╗
+     ║  PAGINA: ABOUT     ║
+     ╚════════════════════╝ -->
 <div id="about" class="page">
   <div class="about-grid">
 
+    <!-- sinistra: slideshow (le foto le inserisce lo script) -->
     <div class="about-left">
       <div class="about-slideshow" id="aboutSlideshow"></div>
     </div>
 
+    <!-- destra: testi e contatti → MODIFICA QUI I TUOI TESTI -->
     <div class="about-right">
+
+      <!-- blocco alto: presentazione -->
       <div>
         <h2>i photograph the spaces<br>between things —<br>light, silence, grain.</h2>
         <p>based in Milan. working with natural light and analogue processes. my practice spans portraiture, urban landscape, and long-form series.</p>
         <p>i have collaborated with independent publishers, galleries, and editorial clients across europe. prints available on request.</p>
+
+        <!-- tabellina: ogni <tr> è una riga -->
         <table class="about-table">
           <tr><td>based</td>    <td>Milan, Italy</td></tr>
           <tr><td>darkroom</td> <td>b&w and color film, RA-4 printing, alternative processes</td></tr>
           <tr><td>available</td><td>commissions, editorial, prints</td></tr>
         </table>
       </div>
+
+      <!-- blocco basso: contatti -->
       <div>
         <div class="contact-list">
           <div class="contact-block">
@@ -416,26 +540,82 @@ nav {
           visitor@matteomontorfano.com:~$ <span class="cursor"></span>
         </div>
       </div>
-    </div>
 
+    </div>
   </div>
 </div>
 
-<!-- LIGHTBOX -->
+
+<!-- ╔════════════════════╗
+     ║  LIGHTBOX          ║
+     ╚════════════════════╝ -->
+<!-- schermata della foto ingrandita: nascosta finché non si clicca una foto -->
 <div class="lightbox" id="lightbox">
   <span class="lightbox-close" onclick="closeLightbox()">close ×</span>
-  <span class="lightbox-prev" onclick="lightboxStep(-1)">← prev</span>
-  <span class="lightbox-next" onclick="lightboxStep(+1)">next →</span>
+  <span class="lightbox-prev"  onclick="lightboxStep(-1)">← prev</span>
+  <span class="lightbox-next"  onclick="lightboxStep(+1)">next →</span>
   <img id="lightbox-img" src="" alt="">
 </div>
 
+
+<!--
+╔══════════════════════════════════════════════════════════════════╗
+║  PARTE 3 — SCRIPT (JavaScript): il comportamento                 ║
+╚══════════════════════════════════════════════════════════════════╝
+-->
 <script>
+
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  IMPOSTAZIONI  ← i numeri che puoi cambiare tu              ║
+   ╚══════════════════════════════════════════════════════════════╝
+   Tutte le misure sono in pixel (px). Cambia un numero, salva, ricarica. */
+const CONFIG = {
+
+  // ── HOME: foto casuali all'apertura ──
+  home: {
+    maxPhotos: 7,                          // quante foto in totale
+    big:    { count: 3, min: 400, max: 520 },   // "grandissime": quante, larghezza min–max
+    medium: { count: 2, min: 260, max: 340 },   // "medie":       quante, larghezza min–max
+    small:  {           min: 160, max: 230 },   // "piccole": tutte le restanti
+  },
+
+  // ── HOME: foto che compaiono passando sul titolo di una serie ──
+  preview: {
+    photos: 5,                             // quante foto
+    min: 200, max: 380,                    // larghezza min–max
+  },
+
+  // ── PAGINA PROGETTO ──
+  project: {
+    minWidth: 200,                         // larghezza minima delle foto
+    maxWidth: 320,                         // larghezza massima delle foto
+    areaMaxWidth: 1100,                    // larghezza massima della scrivania
+    density: 80000,                        // più è ALTO, più la scrivania è alta e le foto sono distanziate
+    noteWidth: 260,                        // larghezza del foglietto di testo
+    noteMargin: 28,                        // spazio libero attorno al testo dove NON possono comparire foto
+  },
+
+  // ── ABOUT ──
+  slideshowMs: 1800,                       // ogni quanti millisecondi cambia foto (1000 = 1 secondo)
+};
+
+
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  DATI: SERIE  ← qui modifichi nomi, anni, testi e foto      ║
+   ╚══════════════════════════════════════════════════════════════╝
+   Ogni serie è un blocco { ... }. Per aggiungerne una, copia un blocco
+   intero (con la virgola finale) e cambia i valori.
+     num    = numero mostrato sul foglietto
+     name   = titolo (appare nella home)
+     year   = anni
+     desc   = testo che compare sul foglietto
+     images = elenco dei file nella cartella "images" */
 const series = [
   {
     num: '001',
     name: 'Ciondolarsi Continuo',
     year: '2025 — ongoing',
-    desc: 'aggiungi qui il testo descrittivo della serie. puoi scrivere quanto vuoi, apparirà nella colonna sinistra sotto il titolo.',
+    desc: 'aggiungi qui il testo descrittivo della serie. puoi scrivere quanto vuoi, apparirà nel foglietto di testo.',
     images: [
       'images/impulsi1.jpg','images/impulsi2.jpg','images/impulsi3.jpg',
       'images/impulsi4.jpg','images/impulsi5.jpg','images/impulsi6.jpg',
@@ -477,199 +657,237 @@ const series = [
 ];
 
 /*
-  ── COMMISSIONED — stessa struttura di series, aggiungi quando pronto ──
+  ── DATI: COMMISSIONED e PUBLICATIONS (da attivare in futuro) ──
+  Stessa struttura di "series". Quando le avrai pronte, togli i
+  simboli di commento e riempi i campi.
+
   const commissioned = [
-    { num: '001', name: 'project name', year: '2025', desc: 'descrizione.', images: ['images/comm1.jpg', ...] },
+    { num: '001', name: 'project name', year: '2025', desc: 'descrizione.', images: ['images/comm1.jpg'] },
   ];
 
-  ── PUBLICATIONS — stessa struttura ──
   const publications = [
-    { num: '001', name: 'publication name', year: '2024', desc: 'descrizione.', images: ['images/pub1.jpg', ...] },
+    { num: '001', name: 'publication name', year: '2024', desc: 'descrizione.', images: ['images/pub1.jpg'] },
   ];
 */
 
-/* ── FISHER-YATES SHUFFLE ── */
+
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  FUNZIONI DI SERVIZIO (piccoli attrezzi riutilizzati)       ║
+   ╚══════════════════════════════════════════════════════════════╝ */
+
+/* Un numero casuale intero tra min e max (estremi inclusi).
+   Esempio: randomBetween(200, 300) → 200, 201, … 300 */
+function randomBetween(min, max) {
+  return min + Math.floor(Math.random() * (max - min + 1));
+}
+
+/* Mescola una lista in modo davvero casuale (algoritmo Fisher-Yates).
+   Non modifica l'originale: restituisce una copia mescolata. */
 function shuffle(arr) {
-  const a = [...arr];
+  const a = [...arr];                                   // copia della lista
   for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
+    const j = Math.floor(Math.random() * (i + 1));      // posizione casuale
+    [a[i], a[j]] = [a[j], a[i]];                        // scambia due elementi
   }
   return a;
 }
 
-/* ── ABOUT SLIDESHOW ── */
-let slideshowInterval = null;
-let slideIdx = 0;
-
-function initSlideshow() {
-  const container = document.getElementById('aboutSlideshow');
-  container.innerHTML = '';
-  const allSrcs = shuffle(series.flatMap(s => s.images));
-  allSrcs.forEach((src, i) => {
-    const slide = document.createElement('div');
-    slide.className = 'about-slide' + (i === 0 ? ' active' : '');
-    slide.innerHTML = `<img src="${src}" alt="" loading="lazy">`;
-    container.appendChild(slide);
-  });
-  slideIdx = 0;
+/* Dice se due rettangoli si sovrappongono. Ogni rettangolo è {x, y, w, h}
+   (x,y = angolo in alto a sinistra; w = larghezza; h = altezza). */
+function rectsOverlap(a, b) {
+  return a.x < b.x + b.w && a.x + a.w > b.x &&
+         a.y < b.y + b.h && a.y + a.h > b.y;
 }
 
-function startSlideshow() {
-  if (slideshowInterval) clearInterval(slideshowInterval);
-  slideshowInterval = setInterval(() => {
-    const slides = document.querySelectorAll('.about-slide');
-    if (!slides.length) return;
-    slides[slideIdx].classList.remove('active');
-    slideIdx = (slideIdx + 1) % slides.length;
-    slides[slideIdx].classList.add('active');
-  }, 1800);
-}
 
-function stopSlideshow() {
-  if (slideshowInterval) clearInterval(slideshowInterval);
-  slideshowInterval = null;
-}
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  TRASCINAMENTO (drag & drop di foto e foglietto)            ║
+   ╚══════════════════════════════════════════════════════════════╝ */
 
-/* ── LIGHTBOX ── */
-let lightboxSrcs = [];
-let lightboxIdx  = 0;
-
-function openLightbox(srcs, idx) {
-  lightboxSrcs = srcs;
-  lightboxIdx  = idx;
-  document.getElementById('lightbox-img').src = srcs[idx];
-  document.getElementById('lightbox').classList.add('active');
-}
-
-function lightboxStep(dir) {
-  lightboxIdx = (lightboxIdx + dir + lightboxSrcs.length) % lightboxSrcs.length;
-  document.getElementById('lightbox-img').src = lightboxSrcs[lightboxIdx];
-}
-
-function closeLightbox() {
-  document.getElementById('lightbox').classList.remove('active');
-  document.getElementById('lightbox-img').src = '';
-}
-
-document.getElementById('lightbox').addEventListener('click', (e) => {
-  if (e.target.tagName !== 'IMG' && e.target.tagName !== 'SPAN') closeLightbox();
-});
-
-document.addEventListener('keydown', (e) => {
-  if (!document.getElementById('lightbox').classList.contains('active')) return;
-  if (e.key === 'Escape')     closeLightbox();
-  if (e.key === 'ArrowRight') lightboxStep(+1);
-  if (e.key === 'ArrowLeft')  lightboxStep(-1);
-});
-
-/* ── STOP CLICK AFTER DRAG ── */
+/* Dopo un trascinamento il browser genera anche un "click": questa
+   funzione lo blocca, così rilasciando la foto non succede nulla
+   (niente lightbox, niente rimescolamento). */
 function stopClick(e) { e.stopPropagation(); e.preventDefault(); }
 
-/* ── MAKE DRAGGABLE ── */
+/* Rende trascinabile un elemento (che deve avere position:absolute). */
 function makeDraggable(block) {
   let startX, startY, startLeft, startTop, didDrag;
+
+  // 1) quando premi il mouse sull'elemento…
   block.addEventListener('mousedown', (e) => {
     e.preventDefault();
     e.stopPropagation();
-    didDrag   = false;
-    startX    = e.clientX;
+    didDrag   = false;                              // per ora non ha ancora trascinato
+    startX    = e.clientX;                          // dove hai premuto
     startY    = e.clientY;
-    startLeft = parseInt(block.style.left) || 0;
+    startLeft = parseInt(block.style.left) || 0;    // dove si trovava l'elemento
     startTop  = parseInt(block.style.top)  || 0;
-    block.style.zIndex = 10;
-    block.style.cursor = 'grabbing';
+    block.style.zIndex = 10;                        // lo porta sopra agli altri
+    block.style.cursor = 'grabbing';                // manina chiusa
+
+    // 2) mentre muovi il mouse, l'elemento ti segue
     function onMove(e) {
       didDrag = true;
       block.style.left = (startLeft + e.clientX - startX) + 'px';
       block.style.top  = (startTop  + e.clientY - startY) + 'px';
     }
+
+    // 3) quando rilasci, smette di seguirti
     function onUp() {
       block.style.cursor = 'grab';
       block.style.zIndex = '';
       document.removeEventListener('mousemove', onMove);
       document.removeEventListener('mouseup', onUp);
+      // se hai trascinato, ignora il click che segue
       if (didDrag) document.addEventListener('click', stopClick, { capture: true, once: true });
     }
+
     document.addEventListener('mousemove', onMove);
     document.addEventListener('mouseup', onUp);
   });
+
   block.style.cursor = 'grab';
 }
 
-/* ── PLACE IMAGES IN HOME ── */
+
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  CAMBIO PAGINA                                              ║
+   ╚══════════════════════════════════════════════════════════════╝ */
+
+/* Mostra la pagina "name" ('home', 'series-detail' o 'about')
+   e nasconde le altre. */
+function showPage(name) {
+  // nasconde tutte le pagine e spegne tutte le voci del menu
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+
+  // accende la pagina richiesta
+  const pg = document.getElementById(name);
+  if (pg) pg.classList.add('active', 'fade');
+
+  // evidenzia la voce giusta del menu (la pagina progetto conta come "work")
+  const navMap = { home: 'nav-home', 'series-detail': 'nav-home', about: 'nav-about' };
+  const navEl = document.getElementById(navMap[name]);
+  if (navEl) navEl.classList.add('active');
+
+  window.scrollTo(0, 0);                       // torna in cima alla pagina
+
+  // lo slideshow gira solo nella pagina About
+  if (name === 'about') startSlideshow();
+  else stopSlideshow();
+}
+
+
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  HOME — foto casuali                                        ║
+   ╚══════════════════════════════════════════════════════════════╝ */
+
+/* Dà la larghezza di una foto in base alla sua posizione nella lista:
+   le prime sono "grandissime", poi "medie", le ultime "piccole".
+   (i numeri si cambiano in CONFIG.home) */
+function homePhotoWidth(idx) {
+  const c = CONFIG.home;
+  if (idx < c.big.count)                 return randomBetween(c.big.min,    c.big.max);
+  if (idx < c.big.count + c.medium.count) return randomBetween(c.medium.min, c.medium.max);
+  return randomBetween(c.small.min, c.small.max);
+}
+
+/* Mette le foto "srcs" dentro l'area "container", in posizioni casuali. */
 function placeImages(srcs, container) {
-  const W = container.offsetWidth;
-  const H = container.offsetHeight;
-  const positions = [];
+  const W = container.offsetWidth;             // larghezza dell'area
+  const H = container.offsetHeight;            // altezza dell'area
+  const positions = [];                        // posizioni già occupate
+
   srcs.forEach((src, idx) => {
+    // il "blocco" che contiene la foto (parte invisibile, poi sfuma)
     const block = document.createElement('div');
     block.className = 'floating-img';
     block.style.cssText = 'position:absolute; overflow:hidden; opacity:0; transition:opacity 0.3s;';
-    // fasce di grandezza: 3 grandissime, 3 medie, le altre piccole
-    let w;
-    if (idx < 3)      w = 400 + Math.floor(Math.random() * 120);   // grandissime 400–520px
-    else if (idx < 6) w = 260 + Math.floor(Math.random() *  80);   // medie 260–340px
-    else              w = 160 + Math.floor(Math.random() *  70);   // piccole 160–230px
+
+    let w = homePhotoWidth(idx);               // larghezza scelta per questa foto
+
+    // carichiamo la foto "di nascosto" per conoscere le sue proporzioni
     const tempImg = new Image();
     tempImg.onload = function () {
+      // altezza = larghezza × (altezza originale / larghezza originale)
       let h = Math.round(w * this.naturalHeight / this.naturalWidth);
-      const maxH = H - 40;                       // mai più alta dell'area
+
+      // se la foto è troppo alta per l'area, la rimpiccioliamo
+      const maxH = H - 40;
       if (h > maxH) { w = Math.round(w * maxH / h); h = maxH; }
+
       block.style.width  = w + 'px';
       block.style.height = h + 'px';
+
+      // prova 10 posizioni a caso e tiene quella più lontana dalle altre foto
       let bestX = 20, bestY = 20, bestScore = -1;
       for (let t = 0; t < 10; t++) {
         const x = 20 + Math.floor(Math.random() * Math.max(1, W - w - 40));
         const y = 20 + Math.floor(Math.random() * Math.max(1, H - h - 40));
-        let score = 0;
+        let score = 0;                         // somma delle distanze dalle altre
         positions.forEach(p => {
           const dx = x - p.x, dy = y - p.y;
-          score += Math.sqrt(dx*dx + dy*dy);
+          score += Math.sqrt(dx * dx + dy * dy);
         });
         if (score > bestScore) { bestScore = score; bestX = x; bestY = y; }
       }
       positions.push({ x: bestX, y: bestY });
       block.style.left = bestX + 'px';
       block.style.top  = bestY + 'px';
+
+      // inserisce la foto nel blocco e il blocco nell'area
       block.innerHTML = `<img src="${src}" alt=""
         style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;">`;
       container.appendChild(block);
-      makeDraggable(block);
-      setTimeout(() => { block.style.opacity = '1'; }, idx * 50);
+      makeDraggable(block);                    // la rende trascinabile
+      setTimeout(() => { block.style.opacity = '1'; }, idx * 50);   // comparsa a cascata
     };
-    tempImg.onerror = () => {};
-    tempImg.src = src;
+    tempImg.onerror = () => {};                // se la foto non esiste, ignora
+    tempImg.src = src;                         // avvia il caricamento
   });
 }
 
-/* ── HOME SHUFFLE ── */
+/* Svuota l'area e ricomincia con foto nuove prese a caso da tutte le serie. */
 function shuffleHomeImages() {
   const area = document.querySelector('.home-images');
   area.querySelectorAll('.floating-img, .preview-img').forEach(el => el.remove());
-  placeImages(shuffle(series.flatMap(s => s.images)).slice(0, 10), area);
+  const allPhotos = series.flatMap(s => s.images);              // tutte le foto di tutte le serie
+  placeImages(shuffle(allPhotos).slice(0, CONFIG.home.maxPhotos), area);
 }
 
-/* ── HOME SERIES HOVER PREVIEW ── */
+
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  HOME — anteprima passando sul titolo di una serie          ║
+   ╚══════════════════════════════════════════════════════════════╝ */
+
+/* Mostra alcune foto a caso della serie numero "seriesIdx". */
 function showSeriesPreview(seriesIdx) {
   const area = document.querySelector('.home-images');
-  area.querySelectorAll('.preview-img').forEach(el => el.remove());
-  const srcs = shuffle(series[seriesIdx].images).slice(0, 5);
+  area.querySelectorAll('.preview-img').forEach(el => el.remove());   // toglie le vecchie anteprime
+
+  const p = CONFIG.preview;
+  const srcs = shuffle(series[seriesIdx].images).slice(0, p.photos);
   const W = area.offsetWidth, H = area.offsetHeight;
+
   srcs.forEach((src, idx) => {
     const block = document.createElement('div');
     block.className = 'preview-img floating-img';
     block.style.cssText = 'position:absolute; overflow:hidden; opacity:0; transition:opacity 0.2s; pointer-events:none;';
-    let w = 200 + Math.floor(Math.random() * 180);   // 200–380px
+
+    let w = randomBetween(p.min, p.max);
+
     const tempImg = new Image();
     tempImg.onload = function () {
       let h = Math.round(w * this.naturalHeight / this.naturalWidth);
-      const maxH = H - 40;                       // mai più alta dell'area
+      const maxH = H - 40;
       if (h > maxH) { w = Math.round(w * maxH / h); h = maxH; }
+
       block.style.width  = w + 'px';
       block.style.height = h + 'px';
+      // posizione completamente casuale dentro l'area
       block.style.left = (20 + Math.floor(Math.random() * Math.max(1, W - w - 40))) + 'px';
       block.style.top  = (10 + Math.floor(Math.random() * Math.max(1, H - h - 40))) + 'px';
+
       block.innerHTML = `<img src="${src}" alt=""
         style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;">`;
       area.appendChild(block);
@@ -679,37 +897,38 @@ function showSeriesPreview(seriesIdx) {
   });
 }
 
-/* ── SERIES DETAIL ── */
-function rectsOverlap(a, b) {
-  return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
-}
 
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  PAGINA PROGETTO — scrivania con foglietto di testo         ║
+   ╚══════════════════════════════════════════════════════════════╝ */
+
+/* Apre la pagina della serie numero "i". */
 function openSeries(i) {
   const s    = series[i];
   const grid = document.getElementById('detail-grid');
+  const c    = CONFIG.project;
 
+  // titolo e anno nella barra in alto
   document.getElementById('detail-title').textContent = s.name;
   document.getElementById('detail-meta').textContent  = s.year;
 
-  grid.innerHTML = '';
-  showPage('series-detail');                 // prima la pagina, così le misure sono reali
+  grid.innerHTML = '';                         // svuota la scrivania
+  showPage('series-detail');                   // prima mostra la pagina, così le misure sono reali
 
-  const srcs = shuffle(s.images);
+  const srcs = shuffle(s.images);              // foto in ordine casuale
 
-  // area di sparpagliamento: più compatta e centrata
-  const n          = srcs.length;
-  const areaW      = Math.min(window.innerWidth - 80, 1100);
-  const areaH      = Math.max(560, Math.round(n * 80000 / areaW * 1.0) + 160);
-  grid.style.width     = areaW + 'px';
-  grid.style.height    = areaH + 'px';
-  grid.style.margin    = '0 auto';
-  grid.style.padding   = '0';
+  // ── 1) dimensioni della scrivania ──
+  const areaW = Math.min(window.innerWidth - 80, c.areaMaxWidth);
+  const areaH = Math.max(560, Math.round(srcs.length * c.density / areaW) + 160);
+  grid.style.width   = areaW + 'px';
+  grid.style.height  = areaH + 'px';
+  grid.style.margin  = '0 auto';               // centrata
+  grid.style.padding = '0';
 
-  // il foglietto: posizione fissa in alto a sinistra
+  // ── 2) il foglietto di testo, fisso in alto a sinistra ──
   const note = document.createElement('div');
   note.className = 'detail-note';
-  const noteW = 260;
-  note.style.width = noteW + 'px';
+  note.style.width = c.noteWidth + 'px';
   note.innerHTML = `
     <p>${s.desc}</p>
     <div class="note-meta">${s.num} — ${s.year}<br>${s.images.length} images</div>
@@ -717,34 +936,37 @@ function openSeries(i) {
   note.style.left = '20px';
   note.style.top  = '20px';
   grid.appendChild(note);
-  makeDraggable(note);
+  makeDraggable(note);                         // si può spostare, come le foto
 
-  // zona vietata alle foto = il foglietto + un margine di respiro
-  const MARGIN = 28;
+  // ── 3) zona vietata: il foglietto + un margine di respiro ──
   const forbidden = {
-    x: 20 - MARGIN, y: 20 - MARGIN,
-    w: noteW + MARGIN * 2,
-    h: note.offsetHeight + MARGIN * 2
+    x: 20 - c.noteMargin,
+    y: 20 - c.noteMargin,
+    w: c.noteWidth + c.noteMargin * 2,
+    h: note.offsetHeight + c.noteMargin * 2
   };
 
-  const placed = [];
+  const placed = [];                           // rettangoli delle foto già messe
 
+  // ── 4) ogni foto: carica, calcola proporzioni, sceglie dove metterla ──
   srcs.forEach((src, idx) => {
     const item = document.createElement('div');
     item.className = 'detail-grid-item';
-    const w = 200 + Math.floor(Math.random() * 120);   // 200–320px
+    const w = randomBetween(c.minWidth, c.maxWidth);
     item.style.width = w + 'px';
 
     const tempImg = new Image();
     tempImg.onload = function () {
       const h = Math.round(w * this.naturalHeight / this.naturalWidth);
 
+      // prova 40 posizioni casuali, scarta quelle sopra il testo,
+      // e tiene quella più lontana dalle altre foto
       let best = null, bestScore = -1;
       for (let t = 0; t < 40; t++) {
         const x = Math.floor(Math.random() * Math.max(1, areaW - w));
         const y = Math.floor(Math.random() * Math.max(1, areaH - h));
         const r = { x, y, w, h };
-        if (rectsOverlap(r, forbidden)) continue;          // mai sopra il testo
+        if (rectsOverlap(r, forbidden)) continue;           // ← qui il testo è protetto
         let score = 0;
         placed.forEach(p => {
           const dx = (x + w / 2) - (p.x + p.w / 2);
@@ -753,9 +975,11 @@ function openSeries(i) {
         });
         if (score > bestScore) { bestScore = score; best = r; }
       }
-      // fallback: sotto il foglietto
-      if (!best) best = { x: Math.floor(Math.random() * Math.max(1, areaW - w)),
-                          y: forbidden.y + forbidden.h + 10, w, h };
+      // se nessuna posizione andava bene, la mette sotto il foglietto
+      if (!best) best = {
+        x: Math.floor(Math.random() * Math.max(1, areaW - w)),
+        y: forbidden.y + forbidden.h + 10, w, h
+      };
 
       placed.push(best);
       item.style.left = best.x + 'px';
@@ -763,7 +987,11 @@ function openSeries(i) {
       item.innerHTML = `<img src="${src}" alt="" loading="lazy">`;
       grid.appendChild(item);
       makeDraggable(item);
+
+      // click sulla foto → si apre ingrandita
       item.addEventListener('click', () => openLightbox(srcs, idx));
+
+      // etichetta "click to expand" che segue il mouse
       const tip = document.getElementById('expandTip');
       item.addEventListener('mouseenter', () => { tip.style.display = 'block'; });
       item.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
@@ -777,48 +1005,136 @@ function openSeries(i) {
   });
 }
 
-/* ── INIT ── */
-shuffleHomeImages();
-initSlideshow();
 
-document.querySelector('.home-images').addEventListener('click', (e) => {
-  if (e.target === e.currentTarget) shuffleHomeImages();
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  LIGHTBOX (foto ingrandita)                                 ║
+   ╚══════════════════════════════════════════════════════════════╝ */
+
+let lightboxSrcs = [];     // elenco delle foto che si possono sfogliare
+let lightboxIdx  = 0;      // quale foto è aperta ora
+
+/* Apre la foto numero "idx" dell'elenco "srcs". */
+function openLightbox(srcs, idx) {
+  lightboxSrcs = srcs;
+  lightboxIdx  = idx;
+  document.getElementById('lightbox-img').src = srcs[idx];
+  document.getElementById('lightbox').classList.add('active');
+}
+
+/* Va alla foto successiva (+1) o precedente (-1), ricominciando da capo se finisce. */
+function lightboxStep(dir) {
+  lightboxIdx = (lightboxIdx + dir + lightboxSrcs.length) % lightboxSrcs.length;
+  document.getElementById('lightbox-img').src = lightboxSrcs[lightboxIdx];
+}
+
+/* Chiude la foto ingrandita. */
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+  document.getElementById('lightbox-img').src = '';
+}
+
+// cliccando sullo sfondo (non sulla foto né sulle scritte) si chiude
+document.getElementById('lightbox').addEventListener('click', (e) => {
+  if (e.target.tagName !== 'IMG' && e.target.tagName !== 'SPAN') closeLightbox();
 });
 
-/* ── HOME SERIES LIST ── */
-const homeList    = document.getElementById('homeSeriesList');
+// tastiera: Esc chiude, frecce destra/sinistra sfogliano
+document.addEventListener('keydown', (e) => {
+  if (!document.getElementById('lightbox').classList.contains('active')) return;
+  if (e.key === 'Escape')     closeLightbox();
+  if (e.key === 'ArrowRight') lightboxStep(+1);
+  if (e.key === 'ArrowLeft')  lightboxStep(-1);
+});
+
+
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  ABOUT — slideshow automatico                               ║
+   ╚══════════════════════════════════════════════════════════════╝ */
+
+let slideshowInterval = null;   // il "timer" che fa cambiare foto
+let slideIdx = 0;               // quale foto è visibile ora
+
+/* Crea tutte le slide (una per foto, in ordine casuale). */
+function initSlideshow() {
+  const container = document.getElementById('aboutSlideshow');
+  container.innerHTML = '';
+  const allSrcs = shuffle(series.flatMap(s => s.images));
+  allSrcs.forEach((src, i) => {
+    const slide = document.createElement('div');
+    slide.className = 'about-slide' + (i === 0 ? ' active' : '');   // solo la prima è visibile
+    slide.innerHTML = `<img src="${src}" alt="" loading="lazy">`;
+    container.appendChild(slide);
+  });
+  slideIdx = 0;
+}
+
+/* Avvia il cambio automatico di foto. */
+function startSlideshow() {
+  if (slideshowInterval) clearInterval(slideshowInterval);
+  slideshowInterval = setInterval(() => {
+    const slides = document.querySelectorAll('.about-slide');
+    if (!slides.length) return;
+    slides[slideIdx].classList.remove('active');          // spegne quella attuale
+    slideIdx = (slideIdx + 1) % slides.length;            // passa alla successiva
+    slides[slideIdx].classList.add('active');             // accende la nuova
+  }, CONFIG.slideshowMs);
+}
+
+/* Ferma il cambio automatico (quando esci dalla pagina About). */
+function stopSlideshow() {
+  if (slideshowInterval) clearInterval(slideshowInterval);
+  slideshowInterval = null;
+}
+
+
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  ELENCO SERIE NELLA HOME (creato dai dati in alto)          ║
+   ╚══════════════════════════════════════════════════════════════╝ */
+
+const homeList = document.getElementById('homeSeriesList');
+
+// le foto "normali" della home (esclude le anteprime)
 const defaultImgs = () => document.querySelectorAll('.home-images .floating-img:not(.preview-img)');
 
+// per ogni serie crea una riga dell'elenco
 series.forEach((s, i) => {
   const li = document.createElement('li');
   const a  = document.createElement('a');
   a.textContent = s.name;
+
+  // mouse sopra il titolo → nasconde le foto casuali e mostra l'anteprima della serie
   a.addEventListener('mouseenter', () => {
     defaultImgs().forEach(el => el.style.opacity = '0');
     showSeriesPreview(i);
   });
+
+  // mouse fuori → toglie l'anteprima e rimette le foto di prima
   a.addEventListener('mouseleave', () => {
     document.querySelectorAll('.home-images .preview-img').forEach(el => el.remove());
     defaultImgs().forEach(el => el.style.opacity = '1');
   });
+
+  // click sul titolo → apre la pagina del progetto
   a.addEventListener('click', () => openSeries(i));
+
   li.appendChild(a);
   homeList.appendChild(li);
 });
 
-/* ── PAGE SWITCHER ── */
-function showPage(name) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-  const pg = document.getElementById(name);
-  if (pg) pg.classList.add('active', 'fade');
-  const navMap = { home: 'nav-home', 'series-detail': 'nav-home', about: 'nav-about' };
-  const navEl = document.getElementById(navMap[name]);
-  if (navEl) navEl.classList.add('active');
-  window.scrollTo(0, 0);
-  if (name === 'about') startSlideshow();
-  else stopSlideshow();
-}
+
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  AVVIO (cosa succede appena si apre il sito)                ║
+   ╚══════════════════════════════════════════════════════════════╝ */
+
+shuffleHomeImages();    // mette le foto casuali nella home
+initSlideshow();        // prepara lo slideshow dell'About
+
+// click su uno spazio vuoto della home → rimescola le foto
+// (e.target === e.currentTarget significa "ho cliccato proprio lo sfondo, non una foto")
+document.querySelector('.home-images').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) shuffleHomeImages();
+});
+
 </script>
 </body>
 </html>
