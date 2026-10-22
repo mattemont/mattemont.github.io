@@ -81,14 +81,16 @@ nav {
 /* home bottom: 3 colonne — series / commissioned / publications + colonna terminale */
 .home-bottom {
   padding: 32px 20px 24px;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
   border-top: 1px solid var(--border);
-  gap: 0;
 }
 
 .home-col {
+  flex: 1;
   padding-right: 32px;
+  padding-left: 24px;
   border-right: 1px solid var(--border);
 }
 
@@ -118,6 +120,7 @@ nav {
 }
 
 .home-info {
+  flex: 1;
   padding-left: 32px;
   display: flex;
   flex-direction: column;
@@ -591,10 +594,12 @@ function placeImages(srcs, container) {
     const block = document.createElement('div');
     block.className = 'floating-img';
     block.style.cssText = 'position:absolute; overflow:hidden; opacity:0; transition:opacity 0.3s;';
-    const w = 90 + Math.floor(Math.random() * 90);
+    let w = 200 + Math.floor(Math.random() * 180);   // 200–380px
     const tempImg = new Image();
     tempImg.onload = function () {
-      const h = Math.round(w * this.naturalHeight / this.naturalWidth);
+      let h = Math.round(w * this.naturalHeight / this.naturalWidth);
+      const maxH = H - 40;                       // mai più alta dell'area
+      if (h > maxH) { w = Math.round(w * maxH / h); h = maxH; }
       block.style.width  = w + 'px';
       block.style.height = h + 'px';
       let bestX = 20, bestY = 20, bestScore = -1;
@@ -639,10 +644,12 @@ function showSeriesPreview(seriesIdx) {
     const block = document.createElement('div');
     block.className = 'preview-img floating-img';
     block.style.cssText = 'position:absolute; overflow:hidden; opacity:0; transition:opacity 0.2s; pointer-events:none;';
-    const w = 90 + Math.floor(Math.random() * 90);
+    let w = 200 + Math.floor(Math.random() * 180);   // 200–380px
     const tempImg = new Image();
     tempImg.onload = function () {
-      const h = Math.round(w * this.naturalHeight / this.naturalWidth);
+      let h = Math.round(w * this.naturalHeight / this.naturalWidth);
+      const maxH = H - 40;                       // mai più alta dell'area
+      if (h > maxH) { w = Math.round(w * maxH / h); h = maxH; }
       block.style.width  = w + 'px';
       block.style.height = h + 'px';
       block.style.left = (20 + Math.floor(Math.random() * Math.max(1, W - w - 40))) + 'px';
@@ -657,6 +664,10 @@ function showSeriesPreview(seriesIdx) {
 }
 
 /* ── SERIES DETAIL ── */
+function rectsOverlap(a, b) {
+  return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+}
+
 function openSeries(i) {
   const s    = series[i];
   const grid = document.getElementById('detail-grid');
@@ -665,18 +676,20 @@ function openSeries(i) {
   document.getElementById('detail-meta').textContent  = s.year;
 
   grid.innerHTML = '';
+  showPage('series-detail');                 // prima la pagina, così le misure sono reali
+
   const srcs = shuffle(s.images);
 
-  // altezza generosa della "scrivania" in base al numero di foto
-  const perRow = 4;
-  const rowCount = Math.ceil(srcs.length / perRow);
-  const containerW = window.innerWidth - 80;
-  const containerH = rowCount * 260 + 260;
-  grid.style.height = containerH + 'px';
+  // area di sparpagliamento: più compatta e centrata
+  const n          = srcs.length;
+  const areaW      = Math.min(window.innerWidth - 80, 1100);
+  const areaH      = Math.max(560, Math.round(n * 55000 / areaW * 1.0) + 160);
+  grid.style.width     = areaW + 'px';
+  grid.style.height    = areaH + 'px';
+  grid.style.margin    = '0 auto';
+  grid.style.padding   = '0';
 
-  const positions = [];
-
-  // il foglietto con la descrizione — un elemento trascinabile come le foto
+  // il foglietto: posizione fissa in alto a sinistra
   const note = document.createElement('div');
   note.className = 'detail-note';
   const noteW = 260;
@@ -685,13 +698,20 @@ function openSeries(i) {
     <p>${s.desc}</p>
     <div class="note-meta">${s.num} — ${s.year}<br>${s.images.length} images</div>
   `;
-  const noteX = Math.floor(Math.random() * Math.max(1, containerW - noteW - 20));
-  const noteY = Math.floor(Math.random() * Math.max(1, containerH * 0.4));
-  note.style.left = noteX + 'px';
-  note.style.top  = noteY + 'px';
-  positions.push({ x: noteX, y: noteY });
+  note.style.left = '20px';
+  note.style.top  = '20px';
   grid.appendChild(note);
   makeDraggable(note);
+
+  // zona vietata alle foto = il foglietto + un margine di respiro
+  const MARGIN = 28;
+  const forbidden = {
+    x: 20 - MARGIN, y: 20 - MARGIN,
+    w: noteW + MARGIN * 2,
+    h: note.offsetHeight + MARGIN * 2
+  };
+
+  const placed = [];
 
   srcs.forEach((src, idx) => {
     const item = document.createElement('div');
@@ -703,20 +723,27 @@ function openSeries(i) {
     tempImg.onload = function () {
       const h = Math.round(w * this.naturalHeight / this.naturalWidth);
 
-      let bestX = 20, bestY = 20, bestScore = -1;
-      for (let t = 0; t < 12; t++) {
-        const x = Math.floor(Math.random() * Math.max(1, containerW - w - 20));
-        const y = Math.floor(Math.random() * Math.max(1, containerH - h - 20));
+      let best = null, bestScore = -1;
+      for (let t = 0; t < 40; t++) {
+        const x = Math.floor(Math.random() * Math.max(1, areaW - w));
+        const y = Math.floor(Math.random() * Math.max(1, areaH - h));
+        const r = { x, y, w, h };
+        if (rectsOverlap(r, forbidden)) continue;          // mai sopra il testo
         let score = 0;
-        positions.forEach(p => {
-          const dx = x - p.x, dy = y - p.y;
+        placed.forEach(p => {
+          const dx = (x + w / 2) - (p.x + p.w / 2);
+          const dy = (y + h / 2) - (p.y + p.h / 2);
           score += Math.sqrt(dx * dx + dy * dy);
         });
-        if (score > bestScore) { bestScore = score; bestX = x; bestY = y; }
+        if (score > bestScore) { bestScore = score; best = r; }
       }
-      positions.push({ x: bestX, y: bestY });
-      item.style.left = bestX + 'px';
-      item.style.top  = bestY + 'px';
+      // fallback: sotto il foglietto
+      if (!best) best = { x: Math.floor(Math.random() * Math.max(1, areaW - w)),
+                          y: forbidden.y + forbidden.h + 10, w, h };
+
+      placed.push(best);
+      item.style.left = best.x + 'px';
+      item.style.top  = best.y + 'px';
       item.innerHTML = `<img src="${src}" alt="" loading="lazy">`;
       grid.appendChild(item);
       makeDraggable(item);
@@ -724,8 +751,6 @@ function openSeries(i) {
     };
     tempImg.src = src;
   });
-
-  showPage('series-detail');
 }
 
 /* ── INIT ── */
