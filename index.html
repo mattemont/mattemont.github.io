@@ -606,7 +606,11 @@ function placeImages(srcs, container) {
     const block = document.createElement('div');
     block.className = 'floating-img';
     block.style.cssText = 'position:absolute; overflow:hidden; opacity:0; transition:opacity 0.3s;';
-    let w = 200 + Math.floor(Math.random() * 180);   // 200–380px
+    // fasce di grandezza: 3 grandissime, 3 medie, le altre piccole
+    let w;
+    if (idx < 3)      w = 400 + Math.floor(Math.random() * 120);   // grandissime 400–520px
+    else if (idx < 6) w = 260 + Math.floor(Math.random() *  80);   // medie 260–340px
+    else              w = 160 + Math.floor(Math.random() *  70);   // piccole 160–230px
     const tempImg = new Image();
     tempImg.onload = function () {
       let h = Math.round(w * this.naturalHeight / this.naturalWidth);
